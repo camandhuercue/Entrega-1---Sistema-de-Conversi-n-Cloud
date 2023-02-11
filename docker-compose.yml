@@ -1,21 +1,8 @@
 version: "3.8"
 services: 
-  back-end:
-    build: .
-    container_name: back-end
-    networks:
-      - web_net
-    ports:
-     - "5000:5000"
-    depends_on: 
-      - db
   db: 
+    build: ./Database/
     container_name: database
-    environment: 
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: libros
-      POSTGRES_DB: libros
-    image: "postgres:latest"
     networks:
       - web_net
     ports: 
