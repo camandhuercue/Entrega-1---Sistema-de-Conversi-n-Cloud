@@ -3,6 +3,7 @@ FROM python:latest
 WORKDIR /workspace
 
 COPY ./compress_api .
+COPY ./setup.py .
 
 RUN pip install --upgrade pip
 RUN pip install -e .
