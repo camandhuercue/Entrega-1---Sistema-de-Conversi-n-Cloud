@@ -1,0 +1,160 @@
+{
+	"info": {
+		"_postman_id": "84cf42a1-7a5c-4123-bdf5-2fc81fec1c3d",
+		"name": "Compress API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/api/auth/signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"usuario\": \"\",\n    \"password1\": \"Temporal123**\",\n    \"password2\": \"Temporal123**\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/signup",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/auth/login",
+			"request": {
+				"auth": {
+					"type": "bearer"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"password\": \"Temporal123**\",\n    \"email\":\"\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/tasks",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3Njc2NTc4OSwianRpIjoiNTE5MTQ0ZDEtZmZkMi00MmNlLWEwM2ItZjg3YTgwMzRkOTRmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImNodWVydGFzQHRlc3QuY29tIiwibmJmIjoxNjc2NzY1Nzg5LCJleHAiOjE2NzY4NTIxODl9.zko9DLhmsp5gKB9afodOfSKcOO9narq1a7cLz8iCOsQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/tasks",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/tasks",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3Njc2NDUwMCwianRpIjoiMDIzNDhiYjgtNDI0MS00OTdhLWFjMGItMWE0OGE5YThkOGUyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImNodWVydGFzQHRlc3QuY29tIiwibmJmIjoxNjc2NzY0NTAwLCJleHAiOjE2NzY4NTA5MDB9.-TC_1mI4AhIVFlqfC8uEh7TWoB7zGjDvl-aMYSyBdMI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"file_content\": \"\",\n    \"filename\":\"Archivo.pdf\",\n    \"format\":\"ZIP\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/tasks",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000",
+			"type": "default"
+		}
+	]
+}
