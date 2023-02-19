@@ -12,6 +12,16 @@ services:
       - db
     volumes: 
       - ${PWD}/files:/workspace/files/
+  queue:
+    build: ./Queue/
+    container_name: queue
+    image: "queue:latest"
+    networks:
+      - web_net
+    depends_on: 
+      - db
+    volumes: 
+      - ${PWD}/files:/workspace/files/
   db: 
     build: ./Database/
     container_name: database
