@@ -86,9 +86,9 @@ class Tasks(Resource):
             if not path.exists(Path + email):
                 mkdir(Path + email + "/")
             file_path = Path + email + "/" + file_hash.hexdigest()
-            task = Tasks_TB.query.filter_by(email=email, path=file_path).first()
+            task = Tasks_TB.query.filter_by(email=email, path=file_path, format=request.json['format']).first()
             if task is not None:
-                return {'message': f'El archivo ya existe', 'id': 96, 'task_id': task.id}, 400
+                return {'message': f'Un trabajo para comprimir el archivo con el formato seleccionado ya existe', 'id': 91, 'task_id': task.id}, 400
             with open(file_path, 'wb') as f:
                 f.write(file)
             new_task = Tasks_TB(
@@ -103,4 +103,4 @@ class Tasks(Resource):
             db.session.commit()
             return {'message': 'Tarea agregada con éxito', 'id':0}
         except Exception as e:
-            return {'message':str(e), 'id': 111}, 500
+            return {'message':str(e), 'id': 106}, 500

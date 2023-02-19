@@ -13,6 +13,8 @@ setup(
         'SQLAlchemy',
         'marshmallow',
         'psycopg2-binary',
-        'zipfile36'
+        'zipfile36',
+        'py7zr',
+        'bz2file',
     ],
 )
