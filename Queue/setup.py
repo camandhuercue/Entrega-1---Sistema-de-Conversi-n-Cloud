@@ -16,5 +16,6 @@ setup(
         'zipfile36',
         'py7zr',
         'bz2file',
+        'secure-smtplib'
     ],
 )

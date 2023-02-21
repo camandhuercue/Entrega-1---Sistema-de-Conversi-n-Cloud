@@ -1,4 +1,4 @@
-from queue_api.utils import get_tasks, update_task
+from queue_api.utils import get_tasks, update_task, send_email
 from tasks import comprimir_zip, comprimir_7z, comprimir_bz2, comprimir_tar
 from os import path, mkdir, remove, rename
 import shutil
@@ -14,13 +14,22 @@ for t in T:
     shutil.copyfile(t['path'], t['filename'])
     if t['format'] == "ZIP":
         comprimir_zip(t['filename'], file_name + '.zip', Path + email + '/compress')
-        update_task(t['id'], t['email'], t['path'], t['format'])
+        send_email(email, t['filename'], t['id'])
+        update_task(t['id'])
     if t['format'] == "7Z":
         comprimir_7z(t['filename'], file_name + '.7z', Path + email + '/compress')
+        send_email(email, t['filename'], t['id'])
+        update_task(t['id'])
     if t['format'] == "BZ2":
         comprimir_bz2(t['filename'], file_name + '.bz2', Path + email + '/compress')
+        send_email(email, t['filename'], t['id'])
+        update_task(t['id'])
     if t['format'] == "TGZ":
         comprimir_tar(t['filename'], file_name + '.tgz', Path + email + '/compress', 'zip')
+        send_email(email, t['filename'], t['id'])
+        update_task(t['id'])
     if t['format'] == "TBZ2":
         comprimir_tar(t['filename'], file_name + '.tar.bz2', Path + email + '/compress', 'bz2')
+        send_email(email, t['filename'], t['id'])
+        update_task(t['id'])
     remove(t['filename'])

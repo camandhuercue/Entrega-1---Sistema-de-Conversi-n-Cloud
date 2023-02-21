@@ -104,3 +104,16 @@ class Tasks(Resource):
             return {'message': 'Tarea agregada con éxito', 'id':0}
         except Exception as e:
             return {'message':str(e), 'id': 106}, 500
+class Tasks_id(Resource):
+    @jwt_required()
+    def get(self, id_task):
+        try:
+            email = get_jwt_identity()
+            if id_task is not None:
+                task = Tasks_TB.query.filter_by(email=email, id=id_task).first()
+                if task is not None:
+                    return {'message': task.id, 'id': 0}, 200
+                else:
+                    return {'message': f'No hay registros disponibles', 'id': 75}, 400
+        except Exception as e:
+            return {'message':str(e), 'id': 119}, 500

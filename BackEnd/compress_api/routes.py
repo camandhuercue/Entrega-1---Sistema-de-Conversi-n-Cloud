@@ -1,6 +1,7 @@
 from compress_api import api
-from compress_api.views import SignUp, Login, Tasks
+from compress_api.views import SignUp, Login, Tasks, Tasks_id
 
 api.add_resource(SignUp, '/api/auth/signup')
 api.add_resource(Login, '/api/auth/login')
 api.add_resource(Tasks, '/api/tasks')
+api.add_resource(Tasks_id, '/api/tasks/<int:id_task>')
