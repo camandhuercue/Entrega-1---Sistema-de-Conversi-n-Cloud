@@ -1,5 +1,6 @@
 import bcrypt
 import re
+import base64
 
 class passwd():
     def hash_passwd(passwd):
@@ -28,3 +29,9 @@ class passwd():
         }
 
         return response
+
+class file2base():
+    def base64file(path):
+        with open(path, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        return encoded_string

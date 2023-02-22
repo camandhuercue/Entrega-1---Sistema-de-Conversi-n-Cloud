@@ -19,9 +19,19 @@ services:
     networks:
       - web_net
     depends_on: 
-      - db
+      - redis
     volumes: 
       - ${PWD}/files:/workspace/files/
+  redis:
+    build: ./Redis/
+    container_name: redis
+    image: "redis:latest"
+    networks:
+      - web_net
+    depends_on: 
+      - db
+    ports: 
+      - "6379:6379"
   db: 
     build: ./Database/
     container_name: database
