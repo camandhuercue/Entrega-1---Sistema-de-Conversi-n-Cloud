@@ -1,0 +1,50 @@
+{% extends 'layout.html' %}
+
+{% block title %}SignUp{% endblock %}
+
+{% block main %}
+<main>
+    <div class="px-4 py-5 my-5 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" fill="currentColor" class="bi bi-journal-text"
+            viewBox="0 0 16 16">
+            <path
+                d="M5 10.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm0-2a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z" />
+            <path
+                d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
+            <path
+                d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
+        </svg>
+        <h1 class="display-5 fw-bold">Registro</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">Por favor diligencia el siguiente formulario para registrarte</p>
+            <form class="p-4 p-md-5 border rounded-3 bg-light" action="{{ url_for('signUp') }}" method="POST">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control {{ error_nombre }}" id="nombre" placeholder="John Doe"name="nombre">
+                    <label for="nombre">Nombre Completo</label>
+                    {{ mensaje_nombre|safe }}
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control {{ error_correo }}" id="correo"placeholder="name@example.com" name="correo">
+                    <label for="correo">Correo Eletrónico</label>
+                    {{ mensaje_correo|safe }}
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control {{ error_passwd1}}" id="password" placeholder="Password"name="passwd1">
+                    <label for="password">Nueva Contraseña</label>
+                    {{ mensaje_passwd1|safe}}
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control {{ error_passwd2 }}" id="password2"placeholder="Password" name="passwd2">
+                    <label for="password2">Repite tu Contraseña</label>
+                    {{ mensaje_passwd2|safe }}
+                </div>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <button type="submit" value="send" class="btn btn-primary btn-lg px-4 gap-3">Registrar</button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4"
+                        onclick="location.href = '/';">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}
