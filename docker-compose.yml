@@ -42,7 +42,29 @@ services:
       - "5432:5432"
     volumes: 
       - ${PWD}/postgres-data:/var/lib/postgresql/data
-
+  nginx:
+    build: ./Nginx/
+    container_name: nginx
+    image: "nginx:latest"
+    networks:
+      - web_net
+    depends_on: 
+      - back-end
+    ports: 
+      - "8080:8080"
+    volumes: 
+      - ${PWD}/Nginx:/etc/nginx/conf.d
+  
+  front-end:
+    build: ./FrontEnd/
+    container_name: frontend
+    image: "front_base:latest"
+    networks:
+      - web_net
+    ports:
+     - "5001:5000"
+    depends_on: 
+      - back-end
 networks:
     web_net:
         driver: bridge

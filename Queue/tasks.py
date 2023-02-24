@@ -54,7 +54,7 @@ def update_task(id):
 @app.task
 def send_email(email, file_name, id):
     login = "soluciones.cloud.2023@hotmail.com"
-    password = f""
+    password = f"$$5fdsf&%*!"
     sender_email = "soluciones.cloud.2023@hotmail.com"
     receiver_email = email
     message = MIMEMultipart("alternative")

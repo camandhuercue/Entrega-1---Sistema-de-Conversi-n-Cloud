@@ -14,20 +14,7 @@
                     enctype="multipart/form-data">
                     <div class="container">
                         <div class="row">
-                            <div class="col-12 col-lg-4">
-                                <div class="form-floating">
-                                    <select class="form-select" aria-label="Default select example"
-                                        name="formato_origen">
-                                        <option value="ZIP" selected>ZIP</option>
-                                        <option value="7Z">7Z</option>
-                                        <option value="TGZ">TGZ</option>
-                                        <option value="TBZ2">TBZ2</option>
-                                        <option value="BZ2">BZ2</option>
-                                    </select>
-                                    <label for="tipo_evento">Formato Origen</label>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-4">
+                            <div class="col-12 col-lg-8">
                                 <div class="floating my-1 py-2">
                                     <input class="form-control" type="file" id="formFile" name="archivo">
                                 </div>
@@ -76,7 +63,7 @@
                                     Nombre Archivo
                                 </div>
                                 <div class="col-1">
-                                    Formato Origen
+                                    Descargar Original
                                 </div>
                                 <div class="col-1">
                                     Formato destino
@@ -95,22 +82,26 @@
                                         {{ f.filename }}
                                     </div>
                                     <div class="col-1">
-                                        {{ f.formato_origen }}
+                                        <button class="btn">
+                                            <a href="{{ url_for('download_org', id=f.id) }}">
+                                                <i class="fa-solid fa-download"></i>
+                                            </a>
+                                        </button>
                                     </div>
                                     <div class="col-1">
-                                        {{ f.formato_destino }}
+                                        {{ f.format }}
                                     </div>
                                     <div class="col-2">
                                         {{ f.status }}
                                     </div>
                                     <div class="col-2">
                                         <button class="btn">
-                                            <a href="{{ url_for('login') }}">
+                                            <a href="{{ url_for('download', id=f.id) }}">
                                                 <i class="fa-solid fa-download"></i>
                                             </a>
                                         </button>
                                         <button class="btn">
-                                            <a href="{{ url_for('login') }}">
+                                            <a href="{{ url_for('delete', id=f.id) }}">
                                                 <i class="fa-solid fa-trash"></i>
                                             </a>
                                         </button>

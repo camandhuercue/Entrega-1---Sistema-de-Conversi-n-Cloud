@@ -23,7 +23,7 @@ class SignUp(Resource):
         passwd_complex = utils.passwd.complex_passwd(request.json['password1'])
 
         if not passwd_complex['len'] or not passwd_complex['num'] or not passwd_complex['upp'] or not passwd_complex['low'] or not passwd_complex['esp']:
-            return {'message': f'Contraseña no cumple', 'id': 23}
+            return {'message': f'Contraseña no cumple', 'id': 23}, 400
 
         passwd_hash = utils.passwd.hash_passwd(bytes(request.json['password1'], 'utf-8')).decode("utf-8")
 
@@ -69,7 +69,7 @@ class Tasks(Resource):
             email = get_jwt_identity()
             task = Tasks_TB.query.filter_by(email=email).first()
             if task is None:
-                return {'message': f'No hay registros disponibles', 'id': 69}, 400
+                return {'message': f'No hay registros disponibles', 'id': 69}, 200
             tasks = Tasks_TB.query.filter_by(email=email)
             return tasks_schema.dump(tasks)
         except Exception as e:
@@ -124,7 +124,7 @@ class Tasks_id(Resource):
                     }
                     return {'message': t, 'id': 0}, 200
                 else:
-                    return {'message': f'No hay registros disponibles', 'id': 124}, 400
+                    return {'message': f'No hay registros disponibles', 'id': 124}, 200
         except Exception as e:
             return {'message':str(e), 'id': 126}, 500
 
@@ -152,7 +152,7 @@ class Tasks_id(Resource):
                     remove('/workspace/files/' + email + '/compress/' + file_name + ext)
                     return {'message': 'La tarea ha sido eliminada', 'id': 0}, 200
                 else:
-                    return {'message': f'No hay registros disponibles', 'id': 141}, 400
+                    return {'message': f'No hay registros disponibles', 'id': 141}, 200
         except Exception as e:
             return {'message':str(e), 'id': 143}, 500
 
@@ -172,7 +172,7 @@ class get_file(Resource):
                 task = Tasks_TB.query.filter_by(email=email, path=Path).first()
                 if task is not None:
                     if len(temp) > 1:
-                        filename = task.filename + '.' + ext
+                        filename = task.filename + ext
                     else:
                         filename = task.filename
                     if ext is not None and ext != '':
@@ -187,6 +187,6 @@ class get_file(Resource):
                         data = utils.file2base.base64file(Path).decode("utf-8")
                     return {'message': {'data': data, 'name': filename}, 'id': 0}, 200
                 else:
-                    return {'message': f'No hay registros disponibles', 'id': 190}, 400
+                    return {'message': f'No hay registros disponibles', 'id': 190}, 200
         except Exception as e:
             return {'message':str(e), 'id': 192}, 500
