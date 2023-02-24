@@ -1,0 +1,123 @@
+{% extends 'layout.html' %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block main %}
+<main>
+    <section>
+        <div class="my-4 text-center">
+            <h1 class="display-5 fw-bold">Nueva conversion de archivos</h1>
+            <div class="col-8 col-md-8 col-lg-10 mx-auto">
+                <p class="lead mb-4">{{ nombre_usuario|safe }}, diligencia el siguiente formulario para crear un nuevo
+                    evento</p>
+                <form class="p-md-3 border rounded-3 bg-light" action="{{ url_for('tasks') }}" method="POST"
+                    enctype="multipart/form-data">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-lg-8">
+                                <div class="floating my-1 py-2">
+                                    <input class="form-control" type="file" id="formFile" name="archivo">
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-4">
+                                <div class="form-floating">
+                                    <select class="form-select" aria-label="Default select example"
+                                        name="formato_destino">
+                                        <option value="ZIP">ZIP</option>
+                                        <option value="7Z" selected>7Z</option>
+                                        <option value="TGZ">TGZ</option>
+                                        <option value="TBZ2">TBZ2</option>
+                                        <option value="BZ2">BZ2</option>
+                                    </select>
+                                    <label for="tipo_evento">Formato Destino</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid mt-3 gap-2 d-sm-flex justify-content-sm-center">
+                        <button type="submit" value="send" class="btn btn-primary btn-lg px-4 gap-3">Convertir</button>
+                        <!--<button type="button" class="btn btn-outline-secondary btn-lg px-4"
+                            onclick="location.href = 'eventos';">Cancelar</button>-->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <div class="container-fluid">
+        <hr>
+    </div>
+    <section>
+        <main>
+            <div class="my-4 text-center">
+                <h1 class="display-5 fw-bold">Conversiones</h1>
+                <div class="col-lg-10 mx-auto">
+                    <p class="lead mb-4">{{ nombre_usuario|safe }}, aquí podrás encontrar tus conversiones realizadas
+                    </p>
+                    <div class="p-4 p-md-5 border rounded-3 bg-light">
+                        <div class="container text-center mb-3">
+                            <div class="row align-items-start">
+                                <div class="col-2">
+                                    Hora de subida
+                                </div>
+                                <div class="col-4">
+                                    Nombre Archivo
+                                </div>
+                                <div class="col-1">
+                                    Descargar Original
+                                </div>
+                                <div class="col-1">
+                                    Formato destino
+                                </div>
+                                <div class="col-2">
+                                    Estado
+                                </div>
+                                <div class="col-2"></div>
+                            </div>
+                            {% for f in form %}
+                                <div class="row align-items-start py-4">
+                                    <div class="col-2">
+                                        {{ f.timestamp }}
+                                    </div>
+                                    <div class="col-4">
+                                        {{ f.filename }}
+                                    </div>
+                                    <div class="col-1">
+                                        <button class="btn">
+                                            <a href="{{ url_for('download_org', id=f.id) }}">
+                                                <i class="fa-solid fa-download"></i>
+                                            </a>
+                                        </button>
+                                    </div>
+                                    <div class="col-1">
+                                        {{ f.format }}
+                                    </div>
+                                    <div class="col-2">
+                                        {{ f.status }}
+                                    </div>
+                                    <div class="col-2">
+                                        <button class="btn">
+                                            <a href="{{ url_for('download', id=f.id) }}">
+                                                <i class="fa-solid fa-download"></i>
+                                            </a>
+                                        </button>
+                                        <button class="btn">
+                                            <a href="{{ url_for('delete', id=f.id) }}">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </a>
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {{ template|safe }}
+                    </div>
+                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center p-4">
+
+                    </div>
+                </div>
+            </div>
+            </div>
+        </main>
+    </section>
+</main>
+{% endblock %}
