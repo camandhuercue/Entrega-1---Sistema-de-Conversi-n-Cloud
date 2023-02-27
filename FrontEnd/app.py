@@ -8,6 +8,7 @@ import json
 app = Flask(__name__)
 
 app.secret_key = '$$%2342432423"##4rewr!'
+ip_backend = '192.168.238.129:8080'
 
 @app.route("/")
 def index():
@@ -31,7 +32,7 @@ def login():
             'password' : request.form.get('passwd'),
         }
         app.logger.info(params)
-        url = "http://192.168.238.129:8080/api/auth/login"
+        url = "http://" + ip_backend + "/api/auth/login"
         x = requests.post(url, json = params)
         if x.status_code != 200:
             print(x.json())
@@ -58,7 +59,7 @@ def signUp():
             'password2' : request.form.get('passwd2')
         }
 
-        url = "http://192.168.238.129:8080/api/auth/signup"
+        url = "http://" + ip_backend + "/api/auth/signup"
         x = requests.post(url, json = params)
         
         if x.status_code != 200:
@@ -82,7 +83,7 @@ def tasks():
             'filename': file.filename,
             'format': request.form.get('formato_destino')
         }
-        url = "http://192.168.238.129:8080/api/tasks"
+        url = "http://" + ip_backend + "/api/tasks"
         headers = {
             'Authorization': 'Bearer ' + session.get("token")
         }
@@ -101,7 +102,7 @@ def tasks():
             pass
         else:
             return redirect('/api/auth/login')
-        url = "http://192.168.238.129:8080/api/tasks"
+        url = "http://" + ip_backend + "/api/tasks"
         headers = {
             'Authorization': 'Bearer ' + session.get("token")
         }
@@ -129,7 +130,7 @@ def logout():
 @app.route("/api/download/<int:id>")
 def download(id):
     if session.get("token"):
-        url = "http://192.168.238.129:8080/api/tasks/{}".format(str(id))
+        url = "http://" + ip_backend + "/api/tasks/{}".format(str(id))
         headers = {
             'Authorization': 'Bearer ' + session.get("token")
         }
@@ -139,7 +140,7 @@ def download(id):
             session['token'] = None
             return redirect('/api/auth/login')
         name = x.json()['message']['internal_id'] + '.' + x.json()['message']['format'].lower()
-        url = "http://192.168.238.129:8080/api/files/{}".format(name)
+        url = "http://" + ip_backend + "/api/files/{}".format(name)
         x = requests.get(url, headers = headers)
         if x.status_code != 200:
             print(x.json())
@@ -161,7 +162,7 @@ def download(id):
 @app.route("/api/download_org/<int:id>")
 def download_org(id):
     if session.get("token"):
-        url = "http://192.168.238.129:8080/api/tasks/{}".format(str(id))
+        url = "http://" + ip_backend + "/api/tasks/{}".format(str(id))
         headers = {
             'Authorization': 'Bearer ' + session.get("token")
         }
@@ -171,7 +172,7 @@ def download_org(id):
             session['token'] = None
             return redirect('/api/auth/login')
         name = x.json()['message']['internal_id']
-        url = "http://192.168.238.129:8080/api/files/{}".format(name)
+        url = "http://" + ip_backend + "/api/files/{}".format(name)
         x = requests.get(url, headers = headers)
         if x.status_code != 200:
             print(x.json())
@@ -186,7 +187,7 @@ def download_org(id):
 @app.route("/api/delete/<int:id>")
 def delete(id):
     if session.get("token"):
-        url = "http://192.168.238.129:8080/api/tasks/{}".format(str(id))
+        url = "http://" + ip_backend + "/api/tasks/{}".format(str(id))
         headers = {
             'Authorization': 'Bearer ' + session.get("token")
         }
