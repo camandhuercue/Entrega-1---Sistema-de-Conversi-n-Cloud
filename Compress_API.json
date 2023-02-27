@@ -1,12 +1,41 @@
 {
 	"info": {
-		"_postman_id": "84cf42a1-7a5c-4123-bdf5-2fc81fec1c3d",
+		"_postman_id": "0edcaeae-16bd-4514-a09b-0031907804d8",
 		"name": "Compress API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20133537"
 	},
 	"item": [
 		{
 			"name": "/api/auth/signup",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Registro Exitoso\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.deep.include('ha sido registrado')\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Contraseña poco segura\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.deep.include('Contraseña no cumple');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Correo ya exitente\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.deep.include('ya está registrado');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -35,6 +64,31 @@
 		},
 		{
 			"name": "/api/auth/login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Login Exitoso\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql('Login Exitoso');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Usuario o Contraseña incorrectos\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql('Usuario o Contraseña Errada');\r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"access_token\", JSON.parse(responseBody).access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer"
@@ -66,128 +120,36 @@
 		},
 		{
 			"name": "/api/tasks",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3NzI1Njk0NiwianRpIjoiYTQ1ZTdiMjItNmIxMC00NzhjLThiMDItYmM1OGY1MzMwNTg0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImNhbWlsby5odWVydGFzLWNAaG90bWFpbC5jb20iLCJuYmYiOjE2NzcyNTY5NDYsImV4cCI6MTY3NzM0MzM0Nn0.-z0b5dXAxQXAP3G2iYaEhH0pJIcZphkNhX-_nsV6938",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/api/tasks",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"tasks"
-					]
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tarea Agregada\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql('Tarea agregada con éxito');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tarea ya existente\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql('Un trabajo para comprimir el archivo con el formato seleccionado ya existe');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/files/<file_name>",
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3NzI3MDQ4MSwianRpIjoiNTY3MDQ2ODktZGYzMi00MGNkLTllMjgtY2E2YTBmZTkwNTljIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImNhbWlsby5odWVydGFzLWNAaG90bWFpbC5jb20iLCJuYmYiOjE2NzcyNzA0ODEsImV4cCI6MTY3NzM1Njg4MX0.g7RIBa6spIS8as_rAjO89swnuKTSQzePr7iJ86dfswE",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/api/files/8b3bc83531d614066136537f5ba79b9b82903abf9c2c0fdcb2dd264ef9af6f75",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"files",
-						"8b3bc83531d614066136537f5ba79b9b82903abf9c2c0fdcb2dd264ef9af6f75"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/tasks/<id>",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3NzI3MDQ4MSwianRpIjoiNTY3MDQ2ODktZGYzMi00MGNkLTllMjgtY2E2YTBmZTkwNTljIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImNhbWlsby5odWVydGFzLWNAaG90bWFpbC5jb20iLCJuYmYiOjE2NzcyNzA0ODEsImV4cCI6MTY3NzM1Njg4MX0.g7RIBa6spIS8as_rAjO89swnuKTSQzePr7iJ86dfswE",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/api/tasks/5",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						"5"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/tasks/<id>",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3NzI1Njk0NiwianRpIjoiYTQ1ZTdiMjItNmIxMC00NzhjLThiMDItYmM1OGY1MzMwNTg0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImNhbWlsby5odWVydGFzLWNAaG90bWFpbC5jb20iLCJuYmYiOjE2NzcyNTY5NDYsImV4cCI6MTY3NzM0MzM0Nn0.-z0b5dXAxQXAP3G2iYaEhH0pJIcZphkNhX-_nsV6938",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/api/tasks/4",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"api",
-						"tasks",
-						"4"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/tasks",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3NzI2MTczMSwianRpIjoiNjJkNDUxYTYtMjU4ZC00YzU2LWFjZTgtZGYzODMyNjFmMzM5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImNhbWlsby5odWVydGFzLWNAaG90bWFpbC5jb20iLCJuYmYiOjE2NzcyNjE3MzEsImV4cCI6MTY3NzM0ODEzMX0.O-mtSF9MihVPbaHt-U7Sv3fDmkGz2sgZiHKa7ED7bg4",
+							"value": "{{access_token}}",
 							"type": "string"
 						}
 					]
@@ -211,6 +173,269 @@
 					"path": [
 						"api",
 						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validación de status (Uploaded)\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[0].status).to.eql('uploaded');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validación de status (Processed)\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[0].status).to.eql('processed');\r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"id\", JSON.parse(responseBody)[0].id);\r",
+							"postman.setEnvironmentVariable(\"filename\", JSON.parse(responseBody)[0].filename);\r",
+							"postman.setEnvironmentVariable(\"format\", JSON.parse(responseBody)[0].format.toLowerCase());"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/tasks",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/tasks/<id>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validación de formato\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message.format.toLowerCase()).to.eql(pm.variables.get(\"format\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validación de filename\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message.filename).to.eql(pm.variables.get(\"filename\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No existe la tarea\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql('No hay registros disponibles');\r",
+							"});\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"internal_id\", JSON.parse(responseBody).message.internal_id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/tasks/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"tasks",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/files/<file_name_original>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Archivo Original Descargado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message.name).to.eql(pm.variables.get(\"filename\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/files/{{internal_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"files",
+						"{{internal_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/files/<file_name_compressed> Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Archivo comprimido Descargado\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message.name).to.eql(pm.variables.get(\"filename\") + '.' + pm.variables.get(\"format\"));\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/files/{{internal_id}}.{{format}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"files",
+						"{{internal_id}}.{{format}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/tasks/<id>",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tarea eliminada\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql('La tarea ha sido eliminada');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No existe tarea\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql('No hay registros disponibles');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/tasks/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"tasks",
+						"{{id}}"
 					]
 				}
 			},
@@ -240,7 +465,7 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "http://localhost:8080",
+			"value": "http://44.213.114.165:8080",
 			"type": "default"
 		}
 	]
