@@ -175,6 +175,8 @@ Para relaizar peticiones se hacen uso de las siguientes direcciones:
 
 ## **4. Test POSTMAN**
 
+Las pruebas y test realizados en postman se encuentran en el archivo Compress_API.json este debe ser importado al espacio de POSTMAN donde se testean los endpoints.
+
 Inicialmente, se debe configurar la base_url tal como se muestra en la imagen, esta dirección es la IP pública de la instancia de AWS. 
 
 ![Postman URL Base.](/img/postman_1.jpg)
