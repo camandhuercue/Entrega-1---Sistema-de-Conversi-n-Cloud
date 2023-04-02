@@ -8,7 +8,7 @@ import json
 app = Flask(__name__)
 
 app.secret_key = '$$%2342432423"##4rewr!'
-ip_backend = '192.168.238.129:8080'
+ip_backend = '172.31.13.57:8080'
 
 @app.route("/")
 def index():
@@ -127,7 +127,7 @@ def logout():
         else:
             return redirect('/api/auth/login')
 
-@app.route("/api/download/<int:id>")
+@app.route("/api/download/<path:id>")
 def download(id):
     if session.get("token"):
         url = "http://" + ip_backend + "/api/tasks/{}".format(str(id))
@@ -139,8 +139,9 @@ def download(id):
             print(x.json())
             session['token'] = None
             return redirect('/api/auth/login')
-        name = x.json()['message']['internal_id'] + '.' + x.json()['message']['format'].lower()
-        url = "http://" + ip_backend + "/api/files/{}".format(name)
+        formato = x.json()['message']['format'].lower()
+        name = x.json()['message']['filename'] + '.' + x.json()['message']['format'].lower()
+        url = "http://" + ip_backend + "/api/files/{}/{}".format(id, name)
         x = requests.get(url, headers = headers)
         if x.status_code != 200:
             print(x.json())
@@ -156,35 +157,48 @@ def download(id):
             'tgz': 'application/gzip',
             '7z': 'application/x-7z-compressed'
         }
-        return Response(binary_file, mimetype='application/octet-stream', headers={'Content-Disposition': 'attachment;filename={}'.format(file_name)})
+        return Response(binary_file, mimetype='application/octet-stream', headers={'Content-Disposition': 'attachment;filename={}'.format(file_name + '.' + formato)})
     return redirect('/api/auth/login')
 
-@app.route("/api/download_org/<int:id>")
+@app.route("/api/download_org/<path:id>")
 def download_org(id):
     if session.get("token"):
+        
         url = "http://" + ip_backend + "/api/tasks/{}".format(str(id))
+
         headers = {
             'Authorization': 'Bearer ' + session.get("token")
         }
+
         x = requests.get(url, headers = headers)
+
         if x.status_code != 200:
             print(x.json())
             session['token'] = None
             return redirect('/api/auth/login')
-        name = x.json()['message']['internal_id']
-        url = "http://" + ip_backend + "/api/files/{}".format(name)
+
+        name = x.json()['message']['filename']
+
+        url = "http://" + ip_backend + "/api/files/{}/{}".format(str(id), name)
+
         x = requests.get(url, headers = headers)
+
         if x.status_code != 200:
             print(x.json())
             session['token'] = None
             return redirect('/api/auth/login')
+
         file = x.json()['message']['data']
+
         file_name = x.json()['message']['name']
+
         binary_file = base64.decodebytes(file.encode("ascii"))
+
         return Response(binary_file, mimetype='application/octet-stream', headers={'Content-Disposition': 'attachment;filename={}'.format(file_name)})
+
     return redirect('/api/auth/login')
 
-@app.route("/api/delete/<int:id>")
+@app.route("/api/delete/<path:id>")
 def delete(id):
     if session.get("token"):
         url = "http://" + ip_backend + "/api/tasks/{}".format(str(id))

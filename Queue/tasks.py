@@ -9,40 +9,40 @@ from queue_api.models import Tasks_TB, tasks_schema
 from queue_api import session, engine
 
 
-app = Celery( 'tasks' , broker = 'redis://192.168.238.129:6379/0' )
+app = Celery( 'tasks' , broker = 'redis://172.31.13.57:6379/0' )
 
 @app.task
-def comprimir_zip(filename, zipname, new_path):
+def comprimir_zip(filename, zipname, new_path, ID):
     print ('\n-> Se va a comprimir el archivo: {}'.format(filename))
     zfile = zipfile.ZipFile(new_path + '/' + zipname, 'w')
-    zfile.write(filename, compress_type = zipfile.ZIP_DEFLATED)
+    zfile.write(ID, compress_type = zipfile.ZIP_DEFLATED, arcname=filename)
     zfile.close()
     print ('\n-> El archivo comprimido se copió a : {}'.format(new_path))
-    remove(filename)
+    remove(ID)
 
 @app.task
-def comprimir_7z(filename, zipname, new_path):
+def comprimir_7z(filename, zipname, new_path, ID):
     with py7zr.SevenZipFile(new_path + "/" + zipname, 'w') as archive:
-        archive.writeall(filename)
-    remove(filename)
+        archive.writeall(ID, arcname=filename)
+    remove(ID)
 
 @app.task
-def comprimir_bz2(filename, zipname, new_path):
+def comprimir_bz2(filename, zipname, new_path, ID):
     with bz2.open(new_path + "/" + zipname, "wb") as f:
-        with open(filename, "rb") as file:
+        with open(ID, "rb") as file:
             f.write(file.read())
-    remove(filename)
+    remove(ID)
 
 @app.task
-def comprimir_tar(filename, zipname, new_path, option):
+def comprimir_tar(filename, zipname, new_path, option, ID):
     if option == 'zip':
         with tarfile.open(new_path + "/" + zipname, "w:gz") as tar:
-            tar.add(filename, arcname="archive/" + filename)
-        remove(filename)
+            tar.add(ID, arcname="archive/" + filename)
+        remove(ID)
     if option == 'bz2':
         with tarfile.open(new_path + "/" + zipname, "w:bz2") as tar:
-            tar.add(filename, arcname="archive/" + filename)
-        remove(filename)
+            tar.add(ID, arcname="archive/" + filename)
+        remove(ID)
 @app.task
 def update_task(id):
     up = (update(Tasks_TB).where(Tasks_TB.id == id).values(status="processed"))

@@ -14,7 +14,7 @@ RUN pip install -e .
 RUN pip install gunicorn
 
 ENV FLASK_APP="compress_api"
-ENV DB_HOST="192.168.238.129"
+ENV DB_HOST="172.31.13.57"
 ENV DB_DB="compress_database"
 ENV DB_USER="compress_user"
 ENV DB_PORT="5432"
