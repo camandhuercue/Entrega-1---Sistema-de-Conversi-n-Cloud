@@ -1,251 +1,211 @@
-# **Intallación de Terraform**
+# **Creacion de variables de entorno**
 
-Desacrgar terraform corriendo el siguiente comando:
-
-```bash
-wget https://releases.hashicorp.com/terraform/1.2.7/terraform_1.2.7_linux_amd64.zip
-```
-
-Para descomprimir terraform utilice el siguiente comando:
+Ejecute los siguientes comando configurar la region y zona:
 
 ```bash
-unzip terraform_1.2.7_linux_amd64.zip
-rm -rf terraform_1.2.7_linux_amd64.zip
+gcloud config set project {project_name}
 ```
-
-Establezca la variable de entorno PATH para los binarios de Terraform:
 
 ```bash
-export PATH="$PATH:$HOME/terraform"
-cd /usr/bin
-sudo ln -s $HOME/terraform
-cd $HOME
-source ~/.bashrc
+gcloud config set compute/region us-central1
+gcloud config set compute/zone us-central1-a
 ```
 
-Confirme la instalación de Terraform ejecutando el siguiente comando:
-
-```bash
-terraform --version
-```
-
-Exporte el proyecto de Google Cloud a una variable de entorno ejecutando el siguiente comando en Cloud Shell:
+Cree las variables de entorno con el id del poyecto, la region y la zona.
 
 ```bash
 export PROJECT_ID=$(gcloud config get-value project)
+export REGION=$(gcloud config get-value compute/region)
+export ZONE=$(gcloud config get-value compute/zone)
+export PRIVATENET='net-pruebas'
+export PRIVATESUBNET='subnet-pruebas'
+export FIREWALL_ALLOW_SSH='privatenet-allow-ssh'
+export FIREWALL_ALLOW_INTERNAL='privatenet-allow-internal'
+export FRONTEND='frontend'
+export BACKEND='backend'
+export WORKER='worker'
+export FILE_SERVER='file-server'
+
 ```
 
-Cree un directorio para su configuración Terraform ejecutando el siguiente comando:
+# **Creacion de VPC**
+
+Ejecute el siguiente comando para crear una red privada
 
 ```bash
-mkdir tfnet
+gcloud compute networks create $PRIVATENET --subnet-mode=custom
 ```
 
-# **Inicializar de Terraform**
-
-Dirigirse a la carpeta tfnet
+Ejecutar el sigueinte comando para crear una subred privada **<name_privatesubnet>** 
 
 ```bash
-cd tfnet
+gcloud compute networks subnets create $PRIVATESUBNET \
+--network=$PRIVATENET \
+ --region=$REGION \
+ --range=172.16.0.0/24
 ```
 
-Crear el archivo ***provider.tf***
+# **Creacion de reglas de Firewall**
+
+Ejecute el siguiente comando para permitir el acceso a todas las maquinas desde local.
 
 ```bash
-vim provider.tf
+gcloud compute firewall-rules create $FIREWALL_ALLOW_SSH \
+--direction=INGRESS \
+--priority=1000 \
+--network=$PRIVATENET \
+--action=ALLOW \
+--rules=tcp:22 \
+--source-ranges=0.0.0.0/0
 ```
 
-
-Copiar el siguiente código en ***provider.tf*** que sirve para definir el proveedor con el cual se va a trabajar.
-
-```hcl
-provider "google" {}
-```
-
-Inicialice Terraform ejecutando los siguientes comandos:
+Ejecute el siguiente comando para permitir todas las comunicaciones entre las redes internas.
 
 ```bash
-terraform init
+gcloud compute firewall-rules create $FIREWALL_ALLOW_INTERNAL \
+ --direction=INGRESS \
+ --priority=1000 \
+ --network=$PRIVATENET \
+ --action=ALLOW \
+ --rules=tcp:0-65535,udp:0-65535,icmp \
+ --source-ranges=172.16.0.0/24
 ```
 
-# **Crear VPC y sus recursos**
+# **Creacion de Maquinas Virtuales**
 
-Crear el archivo ***privatenet.tf***
+Ejecute el siguiente comando para crear las máquinas virtuales necesarias para la ejecución de la aplicación.
 
 ```bash
-vim privatenet.tf
+gcloud compute instances create $FRONTEND \
+--subnet $PRIVATESUBNET \
+--zone $ZONE \
+--private-network-ip 172.16.0.4
+
+gcloud compute instances create $BACKEND \
+--subnet $PRIVATESUBNET \
+--zone $ZONE \
+--private-network-ip 172.16.0.5
+
+gcloud compute instances create $WORKER \
+--subnet $PRIVATESUBNET \
+--zone $ZONE \
+--private-network-ip 172.16.0.6 \
+--no-address
+
+
+gcloud compute instances create $FILE_SERVER \
+--subnet $PRIVATESUBNET \
+--zone $ZONE \
+--private-network-ip 172.16.0.7 \
+--no-address
 ```
 
-Copiar el sigueinte codigo dentro de ***privatenet.tf***
+# **Configuración del NFS**
 
-```hcl
-variable "region" {default = "us-central1"}
-variable "zone" {default = "us-central1-a"}
-
-# Crea una red privada
-resource "google_compute_network" "privatenet" {
-  name                    = "privatenet"
-  auto_create_subnetworks = false
-}
-
-# Crear una subred privada
-resource "google_compute_subnetwork" "privatesubnet-us" {
-  name          = "privatesubnet"
-  region        = "${var.region}"
-  network       = google_compute_network.privatenet.self_link
-  ip_cidr_range = "172.16.0.0/24"
-}
-
-# Cree una regla de firewall para permitir el tráfico  SSH 
-resource "google_compute_firewall" "privatenet-allow-ssh" {
-  name          = "privatenet-allow-ssh"
-  network       = google_compute_network.privatenet.self_link
-  priority      = 1000
-  direction     = "INGRESS"
-  source_ranges = ["0.0.0.0/0"]
-
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-}
-
-# Cree una regla de firewall para permitir el tráfico tcp:0-65535, udp:0-65535, icmp 
-resource "google_compute_firewall" "privatenet-allow-internal" {
-  name          = "privatenet-allow-internal"
-  network       = google_compute_network.privatenet.self_link
-  priority      = 1000
-  direction     = "INGRESS"
-  source_ranges = ["172.16.0.0/24"]
-
-  allow {
-    protocol = "tcp"
-    ports    = ["0-65535"]
-  }
-
-  allow {
-    protocol = "udp"
-    ports    = ["0-65535"]
-  }
-
-  allow {
-    protocol = "icmp"
-  }
-}
-
-module "frontend-vm" {
-  source              = "./instance"
-  instance_name       = "frontend"
-  instance_zone       = "${var.zone}"
-  instance_subnetwork = google_compute_subnetwork.privatesubnet-us.self_link
-  internal_ip         = "172.16.0.4"
-  nat_ip              = null
-}
-
-module "web-server-vm" {
-  source              = "./instance"
-  instance_name       = "web-server"
-  instance_zone       = "${var.zone}"
-  instance_subnetwork = google_compute_subnetwork.privatesubnet-us.self_link
-  internal_ip         = "172.16.0.5"
-  nat_ip              = null
-}
-
-module "worker-wm" {
-  source              = "./instance"
-  instance_name       = "worker"
-  instance_zone       = "${var.zone}"
-  instance_subnetwork = google_compute_subnetwork.privatesubnet-us.self_link
-  internal_ip         = "172.16.0.6"
-  nat_ip              = null
-}
-
-module "file-server-wm" {
-  source              = "./instance"
-  instance_name       = "file-server"
-  instance_zone       = "${var.zone}"
-  instance_subnetwork = google_compute_subnetwork.privatesubnet-us.self_link
-  internal_ip         = "172.16.0.7"
-  nat_ip              = null
-}
-```
-
-# **Configurar la instancia VM**
-
-Crear el archivo ***main.tf*** dentro de la carpeta ***instance***
+Para configurar el sistema de archivos compartidos, es necesario configurar el servicio en la máquina que se designó para tal rol (**file-server**). Utilizaremos nfs-kernel-server, para ello ejecutamos el siguiente comando en la consola como root
 
 ```bash
-mkdir instance && cd instance
-vim main.tf
+apt-get update -y && apt-get install nfs-kernel-server -y
 ```
 
-Copiar el sigueinte codigo dentro de ***main.tf***
-
-```hcl
-variable "instance_name" {}
-variable "instance_zone" {}
-variable "instance_subnetwork" {}
-variable "internal_ip" {}
-variable "nat_ip" {}
-
-variable "instance_type" {
-    default = "f1-micro"
-}
- 
-resource "google_compute_instance" "vm_instance" {
-    name         = "${var.instance_name}"
-    zone         = "${var.instance_zone}"
-    machine_type = "${var.instance_type}"
- 
-    boot_disk {
-        initialize_params {
-            image = "ubuntu-os-cloud/ubuntu-2204-lts"
-        }
-    }
- 
-    network_interface {
-        subnetwork = "${var.instance_subnetwork}"
-        network_ip = "${var.internal_ip}"
-
-    access_config {
-        nat_ip = "${var.nat_ip}"
-        }
-    }
-}
-```
-
-# **Despliegue Infraestructura**
-
-***Habilite el Compute Engine API.***
-
-Para realizar el despliegue primero se reescribe los archivos de configuración de Terraform a un formato y estilo canónico ejecutando el siguiente comando:
+Creamos la carpeta que se hará visible para las otras instancias:
 
 ```bash
-cd ..
-terraform fmt
+mkdir -p /shared/files
 ```
 
-Inicialice Terraform ejecutando el siguiente comando:
+Cambiamos los permisos del directorio para que se ajusten a lo solicitado por el servicio:
 
 ```bash
-terraform init
+chown nobody:nogroup /shared/files/
 ```
 
-Cree un plan de ejecución ejecutando el siguiente comando:
+Ahora, limitamos el acceso al NFS a los servidores locales:
 
 ```bash
-terraform plan
+nano /etc/exports
+/shared/files/   172.16.0.0/24(rw,sync,no_root_squash,no_subtree_check)
 ```
 
-Aplique los cambios deseados ejecutando el siguiente comando:
+Por último, reiniciamos el servicio para que apliquen los cambios:
 
 ```bash
-terraform apply
+systemctl restart nfs-server
 ```
 
-Revise:
+Revisamos que el servicio se encuentre corriendo:
 
-* **Compute Engine:** Deben aparecer las instancias necesarias para la ejecución de la aplicación.
-* **Redes VPC:**
-    * **Redes VPC:** Se debe crear una red VPC con una Sub red perteneciente a la Zona ***"us-central1-a"***
-    * **Firewall:** Se deben crear 2 reglas dse Firewall que afectan a la VPC creada.
+```bash
+systemctl status nfs-server
+```
+
+Del lado del cliente instalamos los paquetes necesarios con el siguiente comando:
+
+```bash
+apt-get update && apt-get install nfs-common -y
+```
+
+Montamos las unidades compartidas y comprobamos que cuando se crea un archivo en un lado es accesible en el otro
+
+Cliente 1
+```bash
+cd
+mkdir test
+mount 172.16.0.7:/shared/files ./test/
+cd ./test
+echo "esto es una prueba" >> prueba.txt
+sha256sum prueba.txt
+```
+
+Cliente 2
+```bash
+cd
+mkdir test
+mount 172.16.0.7:/shared/files ./test/
+cd ./test
+ls -lha   #Debe de existir el archivo prueba.txt
+sha256sum prueba.txt
+```
+
+El hash debe de coincidir.
+
+Ahora, se instala docker en todas las instancias menos en la asignada con el rol de file-system. Para ellos se siguen los siguientes pasos como root:
+
+```bash
+apt-get update && apt-get install ca-certificates curl gnupg
+mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  tee /etc/apt/sources.list.d/docker.list > /dev/null
+apt-get update && apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+```
+
+Descargamos las configuraciones del repositorio 
+
+```bash
+git clone https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud.git
+```
+
+En las máquinas del worker y backend en la carpeta del proyecto se crea la carpeta files:
+
+- Backend:
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Backend/
+mkdir files
+```
+
+- Worker
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker
+mkdir files
+```
+
+Montamos la carpeta compartida en la ruta creada:
+
+```bash
+mount 172.16.0.7:/shared/files ./files/
+```
