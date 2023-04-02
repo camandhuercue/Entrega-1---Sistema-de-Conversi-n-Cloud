@@ -11,7 +11,7 @@ class Usuarios(db.Model):
 class Tasks_TB(db.Model):
     __tablename__ = 'tasks'
     __table_args__ = dict(schema="compress_schema")
-    id = db.Column(db.Integer, db.Identity(start=1, cycle=True), nullable = False, primary_key = True)
+    id = db.Column(db.String(40), nullable = False, primary_key = True)
     email = db.Column(db.String(100))
     status = db.Column(db.String(50))
     timestamp = db.Column(db.DateTime())
