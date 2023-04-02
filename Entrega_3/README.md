@@ -209,3 +209,5 @@ Montamos la carpeta compartida en la ruta creada:
 ```bash
 mount 172.16.0.7:/shared/files ./files/
 ```
+
+Por cada uno de los roles se tiene un archivo **docker-compose.yml** el cual tiene las configuraciones específicas.
