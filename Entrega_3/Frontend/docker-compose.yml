@@ -1,0 +1,17 @@
+version: "3.8"
+services: 
+  front-end:
+    build: ./FrontEnd/
+    container_name: frontend
+    image: "front_base:latest"
+    networks:
+      - web_net
+    ports:
+     - "5001:5000"
+networks:
+    web_net:
+        driver: bridge
+
+volumes: 
+  pg-data: 
+    driver: local
