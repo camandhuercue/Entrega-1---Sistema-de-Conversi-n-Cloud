@@ -17,16 +17,4 @@ class TasksSchema(marshmallow.Schema):
     class Meta:
         fields = ("id", "path", "filename", "email", "format")
 
-tasks_schema = TasksSchema(many = True)root@worker:~/Entrega-1---Sistema-de-Conversi-n-Cloud/Queue/queue_api# 
-root@worker:~/Entrega-1---Sistema-de-Conversi-n-Cloud/Queue/queue_api# 
-root@worker:~/Entrega-1---Sistema-de-Conversi-n-Cloud/Queue/queue_api# 
-root@worker:~/Entrega-1---Sistema-de-Conversi-n-Cloud/Queue/queue_api# ls
-__init__.py  models.py  utils.py
-root@worker:~/Entrega-1---Sistema-de-Conversi-n-Cloud/Queue/queue_api# cat utils.py
-from queue_api.models import Tasks_TB, tasks_schema
-from queue_api import session, engine
-
-
-def get_tasks():
-    tasks = session.query(Tasks_TB).filter_by(status='uploaded')
-    return tasks_schema.dump(tasks)
+tasks_schema = TasksSchema(many = True)
