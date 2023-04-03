@@ -18,6 +18,7 @@ while True:
         ID = t['id']
         #shutil.copyfile(t['path'] + "/" + file_name, t['filename'])
         shutil.copyfile(t['path'] + "/" + file_name, ID)
+        time.sleep(1)
         if t['format'] == "ZIP":
             #comprimir_zip.delay(t['filename'], file_name + '.zip', Path + email + '/compress')
             comprimir_zip.delay(file_name, file_name + '.zip', Path, ID)
