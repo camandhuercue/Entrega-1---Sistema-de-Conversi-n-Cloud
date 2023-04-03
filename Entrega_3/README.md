@@ -212,6 +212,47 @@ mount 172.16.0.7:/shared/files ./files/
 
 Por cada uno de los roles se tiene un archivo **docker-compose.yml** el cual tiene las configuraciones específicas.
 
+Para configurar cada Rol se debe de ejecutar lo siguiente:
+
+
+- Frontend:
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Frontend/
+docker compose up
+```
+
+- Backend:
+
+Se debe de modificar la IP de la base de datos:
+
+```bash
+nano Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Backend/BackEnd/Dockerfile
+```
+
+Se debe de modificar la IP de la base de datos en la sección **DB_HOST**, luego ejecutar lo siguiente:
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Backend/
+docker compose up
+```
+
+- Worker
+
+Se debe de modificar la IP de la base de datos:
+
+```bash
+nano Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker/Queue/queue_api/__init__.py
+```
+Allí ponemos en el string de la base de datos la IP que nos haya asignado el servicio.
+
+Luego ejecutamos lo siguiente:
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker
+docker compose up
+```
+
 Con respecto a la instancia de SQL, se crea con el servio de Cloud SQL de Google, seleccionando como motor Postgres. Las características son las siguientes:
 - Versión: 14.
 - Ambiente: Desarrollo.
