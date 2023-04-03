@@ -100,6 +100,42 @@ gcloud compute instances create $FILE_SERVER \
 --no-address
 ```
 
+# Configuració de SQL
+
+Con respecto a la instancia de SQL, se crea con el servio de Cloud SQL de Google, seleccionando como motor Postgres. Las características son las siguientes:
+- Versión: 14.
+- Ambiente: Desarrollo.
+- Region y Zona: US Central 1 - a.
+- VCPU: 1
+- RAM: 4
+- SSD: 10GB sin aumentos automáticos.
+- Sin IP pública y se crea una conexión privada entre Google y nuestra VPC con rango 172.16.2.0/14.
+- Sin Copias de seguridad ni protección de eliminación.
+- Se deja el restante por defecto.
+
+Mientras se crea la instancia de SQL, se instala el cliente de postgres en cualquiera de las instancias de Compute Engine, con la finalidad de entrar al abase de datos y poder crear la base de datos y el esquema a utilizar por el desarrollo. Para ello en la consola como root se ejecuta lo siguiente:
+
+```bash
+apt-get update && apt-get install postgresql-client -y
+```
+
+Una vez instalado el cliente, conectarse a la base de datos con el siguiente comando:
+
+
+```bash
+psql -h {ip-db} -U postgres
+```
+
+La contraseña que estamos utilizando para la base de datos es SuP3r$3cUr#P$$!!
+
+Una vez en la base de datos ejecutamos lo siguiente para poder configurarla según se necesita en el desarrollo:
+
+```bash
+CREATE DATABASE compress_database;
+\connect compress_database;
+CREATE SCHEMA compress_schema;
+```
+
 # **Configuración del NFS**
 
 Para configurar el sistema de archivos compartidos, es necesario configurar el servicio en la máquina que se designó para tal rol (**file-server**). Utilizaremos nfs-kernel-server, para ello ejecutamos el siguiente comando en la consola como root
@@ -168,6 +204,8 @@ sha256sum prueba.txt
 ```
 
 El hash debe de coincidir.
+
+# Configuración de Instancias
 
 Ahora, se instala docker en todas las instancias menos en la asignada con el rol de file-system. Para ellos se siguen los siguientes pasos como root:
 
@@ -252,38 +290,3 @@ Luego ejecutamos lo siguiente:
 cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker
 docker compose up
 ```
-
-Con respecto a la instancia de SQL, se crea con el servio de Cloud SQL de Google, seleccionando como motor Postgres. Las características son las siguientes:
-- Versión: 14.
-- Ambiente: Desarrollo.
-- Region y Zona: US Central 1 - a.
-- VCPU: 1
-- RAM: 4
-- SSD: 10GB sin aumentos automáticos.
-- Sin IP pública y se crea una conexión privada entre Google y nuestra VPC con rango 172.16.2.0/14.
-- Sin Copias de seguridad ni protección de eliminación.
-- Se deja el restante por defecto.
-
-Mientras se crea la instancia de SQL, se instala el cliente de postgres en cualquiera de las instancias de Compute Engine, con la finalidad de entrar al abase de datos y poder crear la base de datos y el esquema a utilizar por el desarrollo. Para ello en la consola como root se ejecuta lo siguiente:
-
-```bash
-apt-get update && apt-get install postgresql-client -y
-```
-
-Una vez instalado el cliente, conectarse a la base de datos con el siguiente comando:
-
-
-```bash
-psql -h {ip-db} -U postgres
-```
-
-La contraseña que estamos utilizando para la base de datos es SuP3r$3cUr#P$$!!
-
-Una vez en la base de datos ejecutamos lo siguiente para poder configurarla según se necesita en el desarrollo:
-
-```bash
-CREATE DATABASE compress_database;
-\connect compress_database;
-CREATE SCHEMA compress_schema;
-```
-
