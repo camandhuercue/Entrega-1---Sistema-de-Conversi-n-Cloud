@@ -55,7 +55,7 @@ gcloud compute firewall-rules create $FIREWALL_ALLOW_SSH \
 --priority=1000 \
 --network=$PRIVATENET \
 --action=ALLOW \
---rules=tcp:22 \
+--rules=tcp:22,tcp:8080,tcp:5001 \
 --source-ranges=0.0.0.0/0
 ```
 
