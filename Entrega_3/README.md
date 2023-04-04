@@ -79,17 +79,20 @@ Ejecute el siguiente comando para crear las máquinas virtuales necesarias para 
 gcloud compute instances create $FRONTEND \
 --subnet $PRIVATESUBNET \
 --zone $ZONE \
---private-network-ip 172.16.0.4
+--private-network-ip 172.16.0.4 \
+--machine-type f1-micro
 
 gcloud compute instances create $BACKEND \
 --subnet $PRIVATESUBNET \
 --zone $ZONE \
---private-network-ip 172.16.0.5
+--private-network-ip 172.16.0.5 \
+--machine-type f1-micro
 
 gcloud compute instances create $WORKER \
 --subnet $PRIVATESUBNET \
 --zone $ZONE \
 --private-network-ip 172.16.0.6 \
+--machine-type f1-micro \
 --no-address
 
 
@@ -97,6 +100,7 @@ gcloud compute instances create $FILE_SERVER \
 --subnet $PRIVATESUBNET \
 --zone $ZONE \
 --private-network-ip 172.16.0.7 \
+--machine-type f1-micro \
 --no-address
 ```
 
