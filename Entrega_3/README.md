@@ -156,7 +156,7 @@ docker compose up
 
 El servicio queda Levantado.
 
-### ***1.4 Variable "worker-sh" / Instalacion de docker*** 
+### ***1.5 Variable "worker-sh" / Instalacion de docker*** 
 ---
 
 Esta variable se debe ejecutar en la maquina del ***worker***, nos ubicamos en la carpeta correspondiente:
@@ -192,7 +192,7 @@ docker compose up
 
 El servicio queda Levantado.
 
-### ***1.4 Variable "frontend-sh" / Instalacion de docker*** 
+### ***1.6 Variable "frontend-sh" / Instalacion de docker*** 
 ---
 
 Esta variable se debe ejecutar en la maquina del ***frontend***, nos ubicamos en la carpeta correspondiente y se levanta el servicio con ayuda de docker compose.
@@ -361,8 +361,8 @@ rm -rf Entrega-1---Sistema-de-Conversi-n-Cloud
 ```
 
 * ***Habilite el Compute Engine API.***
-* ***Habilite el Compute Engine API.***
-* ***Habilite el Compute Engine API.***
+* ***Habilite el Cloud Resource Manager API.***
+* ***Habilite el Cloud SQL Admin API.***
 
 Una vez estemos en ubicados dentro de la carpeta Terraform
 
@@ -403,7 +403,10 @@ Revise:
 
 # **Configuración de SQL**
 
+Dentro de los archivos de Terraform tambien se deja la opcion de crear la instancia que soportara a Cloud SQL sin embargo este proceso tarda alrededor de 18 Minutos a comparacion de lo 5 Minutos que tarda al crearse por consola. En caso de querer probar que se puede desplegar la instancia SQL con Terraform descomnete el modulo que se encuentra en el archivo ***cloud-sql.tf***
+
 Con respecto a la instancia de SQL, se crea con el servio de Cloud SQL de Google, seleccionando como motor Postgres. Las características son las siguientes:
+
 - Versión: 14.
 - Ambiente: Desarrollo.
 - Region y Zona: US Central 1 - a.
