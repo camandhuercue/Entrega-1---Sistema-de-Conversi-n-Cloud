@@ -1,4 +1,139 @@
-# **Creacion de variables de entorno**
+El despliegue de la arquitectura se realizó de dos maneras que llevan al mismo resultado, solo ejecute una de las siguientes opciones para crear la infraestructura que contendrá la aplicación:
+
+* [Despliegue de Infraestructura por Cloud Shell](#despliegue-de-infraestructura-por-cloud-shell)
+* [Despliegue de infraestructura con Terraform](#despliegue-de-infraestructura-con-terraform)
+
+Antes del despliegue se realiza una breve introducción a conocer cada uno de los archivos (Usados para despliegue Terraform) y comandos (Despliegue Cloud Shell) que son usados para el despliegue del compresor de archivos.
+
+# **Descripcion de Archivos y Comandos**
+
+Los archivos que contiene Terraform están estructurados de la siguiente manera.
+
+```bash
+Terraform/
+├── instance
+│   └── main.tf
+├── sql-instance
+│   └── main.tf
+├── variables.tf
+├── cloud-sql.tf
+├── privatenet.tf
+└── provider.tf
+```
+
+A continuación se da una breve explicación de lo que contiene cada uno y su propósito.
+
+## ***1. Variables***
+
+Como su nombre lo dice tiene variables que seran usadas en otros archivos ***.tf*** Especificamente las variables que se pueden ver en este archivo contiene los comandos iniciales necesarios para dejar preparadas cada una de las maquinas.
+
+### ***1.1 Variable "file-server-sh" / Configuración del NFS*** 
+---
+Esta variable tiene los comando necesarios para la configuracion del NFS a continuacion una explicacion de cada comando.
+
+
+Para configurar el sistema de archivos compartidos, es necesario configurar el servicio en la máquina que se designó para tal rol (**file-server**). Utilizaremos nfs-kernel-server, para ello ejecutamos el siguiente comando en la consola como root
+
+```bash
+sudo apt-get update -y && sudo apt-get install nfs-kernel-server -y
+```
+
+Creamos la carpeta que se hará visible para las otras instancias:
+
+```bash
+sudo mkdir -p /shared/files
+```
+
+Cambiamos los permisos del directorio para que se ajusten a lo solicitado por el servicio:
+
+```bash
+sudo chown nobody:nogroup /shared/files/
+```
+
+Ahora, limitamos el acceso al NFS a los servidores locales:
+
+```bash
+echo "/shared/files/   172.16.0.0/24(rw,sync,no_root_squash,no_subtree_check)" >> /etc/exports
+```
+
+Por último, reiniciamos el servicio para que apliquen los cambios:
+
+```bash
+systemctl restart nfs-server
+```
+
+Si se desea se puede entrar a la instancia que contiene el file-server y probar que el servicio se encuentre corriendo:
+
+
+Revisamos que el servicio se encuentre corriendo:
+
+```bash
+systemctl status nfs-server
+```
+
+Tambien se pueden hacer pruebas desde otras maquinas para comprobar que se estan montando los archivos en la maquina ***file-server***
+
+Del lado del cliente (***backend***, ***worker*** o ***frontend***) instalamos los paquetes necesarios con el siguiente comando:
+
+```bash
+sudo apt-get update -y && sudo apt-get install nfs-common -y
+```
+
+Montamos las unidades compartidas en el cliente y comprobamos que cuando se crea un archivo en un lado es accesible en el otro
+
+```bash
+cd
+mkdir test
+sudo mount 172.16.0.7:/shared/files ./test/
+cd ./test
+echo "esto es una prueba" >> prueba.txt
+```
+
+### ***1.2 Variable "metadata" / Instalacion de docker*** 
+---
+
+Esta variable se debe ejecutar en las maquinas ***backend***, ***worker*** o ***frontend*** con la finalidad de instalar en cada una de ellas docker y dejar el repositorio base en cada una de ellas.
+
+Con estos comando se garantiza la instalacion de Docker en Debian:
+
+```bash
+sudo apt-get update && apt-get install ca-certificates curl gnupg
+mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg
+echo \
+"deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+"$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update && sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+```
+
+Descargamos las configuraciones del repositorio 
+
+```bash
+git clone https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud.git
+```
+
+### ***1.3 Variable "backend-worker-sh" / Paquetes necesarios monteje de archivos NFS*** 
+---
+
+Esta variable se debe ejecutar en las maquinas ***backend***, ***worker***, instalamos los paquetes necesarios para que funcione el NFS con el siguiente comando:
+
+```bash
+apt-get update && apt-get install nfs-common -y
+```
+
+### ***1.4 Variable "backend-sh" / Instalacion de docker*** 
+---
+
+### ***1.4 Variable "worker-sh" / Instalacion de docker*** 
+---
+
+### ***1.4 Variable "frontend-sh" / Instalacion de docker*** 
+---
+
+
+
+# **Despliegue de Infraestructura por Cloud Shell**
 
 Ejecute los siguientes comando configurar la region y zona:
 
@@ -28,7 +163,8 @@ export FILE_SERVER='file-server'
 
 ```
 
-# **Creacion de VPC**
+## **Creacion de VPC**
+---
 
 Ejecute el siguiente comando para crear una red privada
 
@@ -45,7 +181,8 @@ gcloud compute networks subnets create $PRIVATESUBNET \
  --range=172.16.0.0/24
 ```
 
-# **Creacion de reglas de Firewall**
+## **Creacion de reglas de Firewall**
+---
 
 Ejecute el siguiente comando para permitir el acceso a todas las maquinas desde local.
 
@@ -71,7 +208,8 @@ gcloud compute firewall-rules create $FIREWALL_ALLOW_INTERNAL \
  --source-ranges=172.16.0.0/24
 ```
 
-# **Creacion de Maquinas Virtuales**
+## **Creacion de Maquinas Virtuales**
+---
 
 Ejecute el siguiente comando para crear las máquinas virtuales necesarias para la ejecución de la aplicación.
 
@@ -104,193 +242,90 @@ gcloud compute instances create $FILE_SERVER \
 --no-address
 ```
 
-# Configuració de SQL
+# **Despliegue de infraestructura con Terraform**
 
-Con respecto a la instancia de SQL, se crea con el servio de Cloud SQL de Google, seleccionando como motor Postgres. Las características son las siguientes:
-- Versión: 14.
-- Ambiente: Desarrollo.
-- Region y Zona: US Central 1 - a.
-- VCPU: 1
-- RAM: 4
-- SSD: 10GB sin aumentos automáticos.
-- Sin IP pública y se crea una conexión privada entre Google y nuestra VPC con rango 172.16.2.0/14.
-- Sin Copias de seguridad ni protección de eliminación.
-- Se deja el restante por defecto.
+Dentro de la Cloud Shell de GCP se deben ejecutar los siguientes pasos para el despliegue de la infraestructura que soportara el compresor de archivos.
 
-Mientras se crea la instancia de SQL, se instala el cliente de postgres en cualquiera de las instancias de Compute Engine, con la finalidad de entrar al abase de datos y poder crear la base de datos y el esquema a utilizar por el desarrollo. Para ello en la consola como root se ejecuta lo siguiente:
+Descargar terraform corriendo el siguiente comando:
 
 ```bash
-apt-get update && apt-get install postgresql-client -y
+wget https://releases.hashicorp.com/terraform/1.2.7/terraform_1.2.7_linux_amd64.zip
 ```
 
-Una vez instalado el cliente, conectarse a la base de datos con el siguiente comando:
-
+Para descomprimir terraform utilice el siguiente comando:
 
 ```bash
-psql -h {ip-db} -U postgres
+unzip terraform_1.2.7_linux_amd64.zip
+rm -rf terraform_1.2.7_linux_amd64.zip
 ```
 
-La contraseña que estamos utilizando para la base de datos es SuP3r$3cUr#P$$!!
-
-Una vez en la base de datos ejecutamos lo siguiente para poder configurarla según se necesita en el desarrollo:
+Establezca la variable de entorno PATH para los binarios de Terraform:
 
 ```bash
-CREATE DATABASE compress_database;
-\connect compress_database;
-CREATE SCHEMA compress_schema;
+export PATH="$PATH:$HOME/terraform"
+cd /usr/bin
+sudo ln -s $HOME/terraform
+cd $HOME
+source ~/.bashrc
 ```
 
-# **Configuración del NFS**
-
-Para configurar el sistema de archivos compartidos, es necesario configurar el servicio en la máquina que se designó para tal rol (**file-server**). Utilizaremos nfs-kernel-server, para ello ejecutamos el siguiente comando en la consola como root
+Confirme la instalación de Terraform ejecutando el siguiente comando:
 
 ```bash
-apt-get update -y && apt-get install nfs-kernel-server -y
+terraform --version
 ```
 
-Creamos la carpeta que se hará visible para las otras instancias:
+Exporte el proyecto de Google Cloud a una variable de entorno ejecutando el siguiente comando en Cloud Shell:
 
 ```bash
-mkdir -p /shared/files
+export PROJECT_ID=$(gcloud config get-value project)
 ```
 
-Cambiamos los permisos del directorio para que se ajusten a lo solicitado por el servicio:
-
-```bash
-chown nobody:nogroup /shared/files/
-```
-
-Ahora, limitamos el acceso al NFS a los servidores locales:
-
-```bash
-nano /etc/exports
-/shared/files/   172.16.0.0/24(rw,sync,no_root_squash,no_subtree_check)
-```
-
-Por último, reiniciamos el servicio para que apliquen los cambios:
-
-```bash
-systemctl restart nfs-server
-```
-
-Revisamos que el servicio se encuentre corriendo:
-
-```bash
-systemctl status nfs-server
-```
-
-Del lado del cliente instalamos los paquetes necesarios con el siguiente comando:
-
-```bash
-apt-get update && apt-get install nfs-common -y
-```
-
-Montamos las unidades compartidas y comprobamos que cuando se crea un archivo en un lado es accesible en el otro
-
-Cliente 1
-```bash
-cd
-mkdir test
-mount 172.16.0.7:/shared/files ./test/
-cd ./test
-echo "esto es una prueba" >> prueba.txt
-sha256sum prueba.txt
-```
-
-Cliente 2
-```bash
-cd
-mkdir test
-mount 172.16.0.7:/shared/files ./test/
-cd ./test
-ls -lha   #Debe de existir el archivo prueba.txt
-sha256sum prueba.txt
-```
-
-El hash debe de coincidir.
-
-# Configuración de Instancias
-
-Ahora, se instala docker en todas las instancias menos en la asignada con el rol de file-system. Para ellos se siguen los siguientes pasos como root:
-
-```bash
-apt-get update && apt-get install ca-certificates curl gnupg
-mkdir -m 0755 -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo \
-  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
-  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-  tee /etc/apt/sources.list.d/docker.list > /dev/null
-apt-get update && apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-```
-
-Descargamos las configuraciones del repositorio 
+Descargamos el repositorio de terraform que contiene los archivos necesarios para desplegar la infraestructura requerida.
 
 ```bash
 git clone https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud.git
+mv Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Terraform/ ~/
+rm -rf Entrega-1---Sistema-de-Conversi-n-Cloud
 ```
 
-En las máquinas del worker y backend en la carpeta del proyecto se crea la carpeta files:
+* ***Habilite el Compute Engine API.***
+* ***Habilite el Compute Engine API.***
+* ***Habilite el Compute Engine API.***
 
-- Backend:
+Una vez estemos en ubicados dentro de la carpeta Terraform
 
 ```bash
-cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Backend/
-mkdir files
+cd Terraform
 ```
 
-- Worker
+Para realizar el despliegue primero se reescribe los archivos de configuración de Terraform a un formato y estilo canónico ejecutando el siguiente comando:
 
 ```bash
-cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker
-mkdir files
+terraform fmt
 ```
 
-Montamos la carpeta compartida en la ruta creada:
+Inicialice Terraform ejecutando el siguiente comando:
 
 ```bash
-mount 172.16.0.7:/shared/files ./files/
+terraform init
 ```
 
-Por cada uno de los roles se tiene un archivo **docker-compose.yml** el cual tiene las configuraciones específicas.
-
-Para configurar cada Rol se debe de ejecutar lo siguiente:
-
-
-- Frontend:
+Cree un plan de ejecución ejecutando el siguiente comando:
 
 ```bash
-cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Frontend/
-docker compose up
+terraform plan
 ```
 
-- Backend:
-
-Se debe de modificar la IP de la base de datos:
+Aplique los cambios deseados ejecutando el siguiente comando:
 
 ```bash
-nano Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Backend/BackEnd/Dockerfile
+terraform apply
 ```
 
-Se debe de modificar la IP de la base de datos en la sección **DB_HOST**, luego ejecutar lo siguiente:
+Revise:
 
-```bash
-cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Backend/
-docker compose up
-```
-
-- Worker
-
-Se debe de modificar la IP de la base de datos:
-
-```bash
-nano Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker/Queue/queue_api/__init__.py
-```
-Allí ponemos en el string de la base de datos la IP que nos haya asignado el servicio.
-
-Luego ejecutamos lo siguiente:
-
-```bash
-cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker
-docker compose up
-```
+* **Compute Engine:** Deben aparecer las instancias necesarias para la ejecución de la aplicación.
+* **Redes VPC:**
+    * **Redes VPC:** Se debe crear una red VPC con una Sub red perteneciente a la Zona ***"us-central1-a"***
+    * **Firewall:** Se deben crear 2 reglas dse Firewall que afectan a la VPC creada.
