@@ -1,3 +1,7 @@
+Video de Sustentación 
+
+https://uniandes-my.sharepoint.com/:v:/g/personal/c_huertasc_uniandes_edu_co/EVzV2Rd1vLRMgS2BsgDBxUYBmzWYtspjLgJ08nKpefZ_nQ?e=8MxiaS
+
 El despliegue de la arquitectura se realizó de dos maneras que llevan al mismo resultado, solo ejecute una de las siguientes opciones para crear la infraestructura que contendrá la aplicación:
 
 * [Despliegue de Infraestructura por Cloud Shell](#despliegue-de-infraestructura-por-cloud-shell)
