@@ -89,7 +89,7 @@ cd ./test
 echo "esto es una prueba" >> prueba.txt
 ```
 
-### ***1.2 Variable "metadata" / Instalacion de docker*** 
+### ***1.2 Variable "metadata" / Instalación de docker*** 
 ---
 
 Esta variable se debe ejecutar en las maquinas ***backend***, ***worker*** o ***frontend*** con la finalidad de instalar en cada una de ellas docker y dejar el repositorio base en cada una de ellas.
@@ -125,11 +125,82 @@ apt-get update && apt-get install nfs-common -y
 ### ***1.4 Variable "backend-sh" / Instalacion de docker*** 
 ---
 
+Esta variable se debe ejecutar en la maquina del ***backend***, nos ubicamos en la carpeta correspondiente:
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Backend/
+mkdir files
+```
+
+Montamos la carpeta compartida en la ruta creada:
+
+```bash
+mount 172.16.0.7:/shared/files ./files/
+```
+
+> **Nota:** 
+Desde este punto se debe ejecutar tanto al desplegar con Cloud Shell como con Terraform.
+
+Se debe de modificar la IP de la base de datos:
+
+```bash
+nano Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Backend/BackEnd/Dockerfile
+```
+
+Se debe de modificar la IP de la base de datos en la sección **DB_HOST**, luego ejecutar lo siguiente:
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Backend/
+docker compose up
+```
+
+El servicio queda Levantado.
+
 ### ***1.4 Variable "worker-sh" / Instalacion de docker*** 
 ---
 
+Esta variable se debe ejecutar en la maquina del ***worker***, nos ubicamos en la carpeta correspondiente:
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker
+mkdir files
+```
+
+Montamos la carpeta compartida en la ruta creada:
+
+```bash
+mount 172.16.0.7:/shared/files ./files/
+```
+
+> **Nota:** 
+Desde este punto se debe ejecutar tanto al desplegar con Cloud Shell como con Terraform.
+
+Se debe de modificar la IP de la base de datos:
+
+```bash
+nano Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker/Queue/queue_api/__init__.py
+```
+
+Allí ponemos en el string de la base de datos la IP que nos haya asignado el servicio.
+
+Luego ejecutamos lo siguiente:
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Worker
+docker compose up
+```
+
+El servicio queda Levantado.
+
 ### ***1.4 Variable "frontend-sh" / Instalacion de docker*** 
 ---
+
+Esta variable se debe ejecutar en la maquina del ***frontend***, nos ubicamos en la carpeta correspondiente y se levanta el servicio con ayuda de docker compose.
+
+```bash
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_3/Frontend/
+docker compose up
+```
 
 
 
@@ -329,3 +400,42 @@ Revise:
 * **Redes VPC:**
     * **Redes VPC:** Se debe crear una red VPC con una Sub red perteneciente a la Zona ***"us-central1-a"***
     * **Firewall:** Se deben crear 2 reglas dse Firewall que afectan a la VPC creada.
+
+# **Configuración de SQL**
+
+Con respecto a la instancia de SQL, se crea con el servio de Cloud SQL de Google, seleccionando como motor Postgres. Las características son las siguientes:
+- Versión: 14.
+- Ambiente: Desarrollo.
+- Region y Zona: US Central 1 - a.
+- VCPU: 1
+- RAM: 4
+- SSD: 10GB sin aumentos automáticos.
+- Sin IP pública y se crea una conexión privada entre Google y nuestra VPC con rango 172.16.2.0/14.
+- Sin Copias de seguridad ni protección de eliminación.
+- Se deja el restante por defecto.
+
+> **Nota:** 
+Desde este punto se debe ejecutar tanto al desplegar con Cloud Shell como con Terraform.
+
+Mientras se crea la instancia de SQL, se instala el cliente de postgres en cualquiera de las instancias de Compute Engine, con la finalidad de entrar al abase de datos y poder crear la base de datos y el esquema a utilizar por el desarrollo. Para ello en la consola como root se ejecuta lo siguiente:
+
+```bash
+apt-get update && apt-get install postgresql-client -y
+```
+
+Una vez instalado el cliente, conectarse a la base de datos con el siguiente comando:
+
+
+```bash
+psql -h {ip-db} -U postgres
+```
+
+La contraseña que estamos utilizando para la base de datos es SuP3r$3cUr#P$$!!
+
+Una vez en la base de datos ejecutamos lo siguiente para poder configurarla según se necesita en el desarrollo:
+
+```bash
+CREATE DATABASE compress_database;
+\connect compress_database;
+CREATE SCHEMA compress_schema;
+```
