@@ -5,7 +5,7 @@ El despliegue de la arquitectura se realizó de dos maneras que llevan al mismo
 
 La arquitectura que se establecio crear es mostrada en la siguiente imagen.
 
-![Infraestructura File Compresor GCP.](/imgs/Infraestructura_GCP.jpg "Infraestructura File Compresor GCP.")
+![Infraestructura File Compresor GCP.](https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud/blob/main/Entrega_3/imgs/Infraestructura_GCP.jpg "Infraestructura File Compresor GCP.")
 
 Antes del despliegue se realiza una breve introducción a conocer cada uno de los archivos (Usados para despliegue Terraform) y comandos (Despliegue Cloud Shell) que son usados para el despliegue del compresor de archivos.
 
