@@ -87,7 +87,7 @@ class Tasks(Resource):
         #Path = '/workspace/files/'
         bucket_name = getenv("GS_BUCKET", "unsuperbucketparacloud")
 
-        client = storage.Client.from_service_account_json('/workspace/key.json')
+        client = storage.Client.from_service_account_json('/workspace/compress_api/key.json')
 
         try:
             UUID = uuid.uuid4().hex
