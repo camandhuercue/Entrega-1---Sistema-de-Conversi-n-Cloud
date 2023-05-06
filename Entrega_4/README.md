@@ -154,8 +154,26 @@ Para este punto, nos dirigimos a Cloud Engine y seleccionamos "Plantilla de Inst
 - Por último, en la sección de Administración > Automatización se debe de pegar las siguientes secuencias de inicio
 
 ```bash
-
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+git clone https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud.git
+cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_4/Backend/
+docker compose up -d
 ```
+
+También se puede usar el siguiente comando en la consola de Google 
+
+```bash
+gcloud compute instance-templates create {nombre_plantilla} --project={nombre_proyecto} --machine-type=f1-micro --network-interface=network-tier=PREMIUM,subnet={nombre_subnet} --metadata=startup-script=sudo\ install\ -m\ 0755\ -d\ /etc/apt/keyrings$'\n'curl\ -fsSL\ https://download.docker.com/linux/debian/gpg\ \|\ sudo\ gpg\ --dearmor\ -o\ /etc/apt/keyrings/docker.gpg$'\n'sudo\ chmod\ a\+r\ /etc/apt/keyrings/docker.gpg$'\n'echo\ \\$'\n'\ \ \"deb\ \[arch=\"\$\(dpkg\ --print-architecture\)\"\ signed-by=/etc/apt/keyrings/docker.gpg\]\ https://download.docker.com/linux/debian\ \\$'\n'\ \ \"\$\(.\ /etc/os-release\ \&\&\ echo\ \"\$VERSION_CODENAME\"\)\"\ stable\"\ \|\ \\$'\n'\ \ sudo\ tee\ /etc/apt/sources.list.d/docker.list\ \>\ /dev/null$'\n'sudo\ apt-get\ update$'\n'sudo\ apt-get\ install\ docker-ce\ docker-ce-cli\ containerd.io\ docker-buildx-plugin\ docker-compose-plugin$'\n'git\ clone\ https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud.git$'\n'cd\ Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_4/Backend/$'\n'docker\ compose\ up\ -d --maintenance-policy=MIGRATE --provisioning-model=STANDARD --service-account={nombre_cuenta_de_servicio} --scopes=https://www.googleapis.com/auth/cloud-platform --region=us-central1 --create-disk=auto-delete=yes,boot=yes,device-name={nombre_plantilla},image=projects/debian-cloud/global/images/debian-11-bullseye-v20230411,mode=rw,size=10,type=pd-balanced --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any
+```
+
 
 ## **Creacion de Maquinas Virtuales**
 ---
