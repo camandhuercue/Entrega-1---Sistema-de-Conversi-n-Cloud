@@ -136,7 +136,9 @@ class Tasks(Resource):
                 topic=getenv("MY_TOPIC_NAME", "pruebas"),
             )
             
-            future = publisher.publish(topic_name, b'{{"uuid": "{}"}}'.format(UUID))
+            pub_data = '{{"uuid": "{}"}}'.format(UUID)
+            
+            future = publisher.publish(topic_name, str.encode(pub_data))
             future.result()
             
             return {'message': 'Tarea agregada con éxito', 'id':0}
