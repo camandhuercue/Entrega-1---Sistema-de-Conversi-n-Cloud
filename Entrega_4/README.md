@@ -191,6 +191,7 @@ Los comandos se muestran a continuación
 gcloud beta compute instance-groups managed create {nombre_de_grupo} --project={nombre_de_proyecto} --base-instance-name={nombre_de_grupo} --size=1 --template={nombre_de_plantilla} --zones=us-central1-c,us-central1-f,us-central1-b --target-distribution-shape=EVEN --instance-redistribution-type=PROACTIVE --list-managed-instances-results=PAGELESS --no-force-update-on-repair && gcloud compute instance-groups managed set-named-ports grupo-backend --project={nombre_del_proyecto} --region=us-central1 --named-ports=flask:8080 && gcloud beta compute instance-groups managed set-autoscaling {nombre_de_grupo} --project={nombre_del_proyecto} --region=us-central1 --cool-down-period=60 --max-num-replicas=3 --min-num-replicas=1 --mode=on --target-cpu-utilization=0.5 --update-stackdriver-metric=compute.googleapis.com/instance/memory/balloon/ram_used --stackdriver-metric-utilization-target=60.0 --stackdriver-metric-utilization-target-type=gauge
 ```
 
+**Nota**: Tener presente que la creación de la imagen de Docker puede tardar aproximadamente 5 minutos debido a que la máquina es muy pequeña en procesamiento.
 
 ## **Creacion de Maquinas Virtuales**
 ---
