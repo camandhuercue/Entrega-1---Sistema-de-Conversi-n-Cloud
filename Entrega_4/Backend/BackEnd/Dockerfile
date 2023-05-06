@@ -22,6 +22,8 @@ ENV DB_USER="postgres"
 ENV DB_PORT="5432"
 ENV JWTSECRET="123"
 ENV GS_BUCKET="unsuperbucketparaelproyecto"
+ENV GOOGLE_CLOUD_PROJECT="soluciones-cloud"
+ENV MY_TOPIC_NAME="pruebas"
 #ENV DB_PW="$$53eer3&777R"
 #ENV FLASK_DEBUG=1
 
