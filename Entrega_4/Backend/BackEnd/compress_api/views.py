@@ -12,6 +12,7 @@ import uuid
 import shutil
 from google.cloud import storage
 from google.cloud import pubsub_v1
+from google.oauth2 import service_account
 
 class SignUp(Resource):
     def post(self):
@@ -128,8 +129,8 @@ class Tasks(Resource):
             
             db.session.add(new_task)
             db.session.commit()
-            
-            publisher = pubsub_v1.PublisherClient()
+            credentials = service_account.Credentials.from_service_account_file('/workspace/compress_api/key.json')
+            publisher = pubsub_v1.PublisherClient(credentials = credentials)
             topic_name = 'projects/{project_id}/topics/{topic}'.format(
                 project_id=getenv("GOOGLE_CLOUD_PROJECT", "soluciones-cloud"),
                 topic=getenv("MY_TOPIC_NAME", "pruebas"),
