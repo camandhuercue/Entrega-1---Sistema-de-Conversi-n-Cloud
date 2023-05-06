@@ -4,7 +4,7 @@ WORKDIR /workspace
 
 COPY ./compress_api/* ./compress_api/
 COPY ./setup.py .
-COPY ./key.json .
+#COPY ./key.json .
 #COPY ./wsgi.py .
 COPY ./instance/* ./instance/
 
