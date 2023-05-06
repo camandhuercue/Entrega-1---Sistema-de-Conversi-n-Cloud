@@ -129,13 +129,10 @@ class Tasks(Resource):
             db.session.add(new_task)
             db.session.commit()
             
-            GOOGLE_CLOUD_PROJECT = getenv("GOOGLE_CLOUD_PROJECT", "soluciones-cloud")
-            MY_TOPIC_NAME = getenv("MY_TOPIC_NAME", "pruebas")
-            
             publisher = pubsub_v1.from_service_account_json('/workspace/key.json')
             topic_name = 'projects/{project_id}/topics/{topic}'.format(
-                project_id=os.getenv('GOOGLE_CLOUD_PROJECT'),
-                topic='MY_TOPIC_NAME',  # Set this to something appropriate.
+                project_id=getenv("GOOGLE_CLOUD_PROJECT", "soluciones-cloud"),
+                topic=getenv("MY_TOPIC_NAME", "pruebas"),
             )
             
             future = publisher.publish(topic_name, b'{{"uuid": "{}"}}'.format(UUID))
