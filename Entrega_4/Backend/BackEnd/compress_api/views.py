@@ -11,6 +11,7 @@ from os import path, mkdir, remove, getenv
 import uuid
 import shutil
 from google.cloud import storage
+from google.cloud import pubsub_v1
 
 class SignUp(Resource):
     def post(self):
@@ -96,26 +97,7 @@ class Tasks(Resource):
                 return {'message': f'El formato no es compaible', 'id': 84}, 400
 
             file = base64.decodebytes(request.json['file_content'].encode("ascii"))
-            #file_hash = hashlib.sha256()
-            #file_hash.update(file)
-
-            #if not path.exists(Path + email):
-            #    mkdir(Path + email + "/")
-            #file_path = Path + email + "/" + file_hash.hexdigest()
-            #file_path = Path + email + "/" + UUID
-
-            #if not path.exists(file_path):
-                #mkdir(file_path + "/")
-
-            #file_path = Path + email + "/" + UUID
-            #task = Tasks_TB.query.filter_by(email=email, path=file_path, format=request.json['format']).first()
-            #if task is not None:
-            #    return {'message': f'Un trabajo para comprimir el archivo con el formato seleccionado ya existe', 'id': 91, 'task_id': task.id}, 400
             
-            #with open(file_path, 'wb') as f:
-            #with open(file_path + '/' + request.json['filename'], 'wb') as f:
-            #    f.write(file)
-
             buckets = client.list_buckets()
 
             b_name = []
@@ -146,6 +128,18 @@ class Tasks(Resource):
             
             db.session.add(new_task)
             db.session.commit()
+            
+            GOOGLE_CLOUD_PROJECT = getenv("GOOGLE_CLOUD_PROJECT", "soluciones-cloud")
+            MY_TOPIC_NAME = getenv("MY_TOPIC_NAME", "pruebas")
+            
+            publisher = pubsub_v1.from_service_account_json('/workspace/key.json')
+            topic_name = 'projects/{project_id}/topics/{topic}'.format(
+                project_id=os.getenv('GOOGLE_CLOUD_PROJECT'),
+                topic='MY_TOPIC_NAME',  # Set this to something appropriate.
+            )
+            
+            future = publisher.publish(topic_name, b'{{"uuid": "{}"}}'.format(UUID))
+            future.result()
             
             return {'message': 'Tarea agregada con éxito', 'id':0}
         
