@@ -16,7 +16,7 @@ RUN pip install gunicorn
 RUN pip install google-cloud-storage
 
 ENV FLASK_APP="compress_api"
-ENV DB_HOST="172.16.2.3"
+ENV DB_HOST="172.16.2.5"
 ENV DB_DB="compress_database"
 ENV DB_USER="postgres"
 ENV DB_PORT="5432"
