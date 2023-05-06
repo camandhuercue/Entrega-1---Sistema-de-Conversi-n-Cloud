@@ -14,6 +14,7 @@ RUN pip install --upgrade pip
 RUN pip install -e .
 RUN pip install gunicorn
 RUN pip install google-cloud-storage
+RUN pip install google-cloud-pubsub
 
 ENV FLASK_APP="compress_api"
 ENV DB_HOST="172.16.2.5"
