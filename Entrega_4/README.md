@@ -126,7 +126,17 @@ CREATE DATABASE compress_database;
 \connect compress_database;
 CREATE SCHEMA compress_schema;
 ```
+La IP asignada por Google se debe de configurar en la variable de entorno del Dockerfile en Backend.
 
+## **Creación de Tópico**
+
+Para crear un tópico, al cual las tareas de compirmir se subirán, se ejecuta el siguiente comando en la consola de Google Cloud:
+
+```bash
+gcloud pubsub topics create {nombre_del_topico}
+```
+
+El nombre del tópico se debe de actualiza en la variable de entorno del Dockerfile en Backend.
 
 ## **Creacion de Maquinas Virtuales**
 ---
