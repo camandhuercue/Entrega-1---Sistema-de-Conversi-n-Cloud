@@ -88,7 +88,8 @@ class Tasks(Resource):
         #Path = '/workspace/files/'
         bucket_name = getenv("GS_BUCKET", "unsuperbucketparacloud")
 
-        client = storage.Client.from_service_account_json('/workspace/compress_api/key.json')
+        #client = storage.Client.from_service_account_json('/workspace/compress_api/key.json')
+        client = storage.Client()
 
         try:
             UUID = uuid.uuid4().hex
@@ -129,8 +130,9 @@ class Tasks(Resource):
             
             db.session.add(new_task)
             db.session.commit()
-            credentials = service_account.Credentials.from_service_account_file('/workspace/compress_api/key.json')
-            publisher = pubsub_v1.PublisherClient(credentials = credentials)
+            #credentials = service_account.Credentials.from_service_account_file('/workspace/compress_api/key.json')
+            #publisher = pubsub_v1.PublisherClient(credentials = credentials)
+            publisher = pubsub_v1.PublisherClient()
             topic_name = 'projects/{project_id}/topics/{topic}'.format(
                 project_id=getenv("GOOGLE_CLOUD_PROJECT", "soluciones-cloud"),
                 topic=getenv("MY_TOPIC_NAME", "pruebas"),
