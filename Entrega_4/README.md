@@ -140,8 +140,22 @@ El nombre del tópico se debe de actualiza en la variable de entorno del Dockerf
 
 ## **Creación de Cuenta de Servicio**
 
-Se debe de crear una cuenta de servico con la finalidad de que las máquinas que se crean en el autoscaling tengan permisos de leer el tópico y escribir en el bucket. Por temas de facilidad y tiempo, se asignan roles de administración tanto para pub/sub como para cloud storage. Esto se hace desde "IAM y Adminbistración" > "Cuentas de Servicio", se da clic en crear una cuenta de servicio, se asigna un nombre para tal cuenta y se da clic en "crear y continuar". En los roles buscamos "Cloud Storage" y agregamos "Administrador de Almacenamiento", luego agregamos otro rol y buscamos "Pub/Sub" y agregamos "Administrador de Pub/Sub". Con esto ya creamos nuestra cuenta de servicio para asignar a la plantilla de VM.
+Se debe de crear una cuenta de servico con la finalidad de que las máquinas que se crean en el autoscaling tengan permisos de leer el tópico y escribir en el bucket. Por temas de facilidad y tiempo, se asignan roles de administración tanto para pub/sub como para cloud storage. Esto se hace desde "IAM y Adminbistración" > "Cuentas de Servicio", se da clic en crear una cuenta de servicio, se asigna un nombre para tal cuenta y se da clic en "crear y continuar". En los roles buscamos "Cloud Storage" y agregamos "Administrador de Almacenamiento", luego agregamos otro rol y buscamos "Pub/Sub" y agregamos "Administrador de Pub/Sub". Con esto ya creamos nuestra cuenta de servicio para asignar a la plantilla de instancia.
 
+
+## **Creación de Plantilla de Instancias**
+
+Para este punto, nos dirigimos a Cloud Engine y seleccionamos "Plantilla de Instancia". En este punto es importante:
+
+- Asignar Un nombre de Plantilla.
+- Seleccionar Serie N1, y como tipo de máquina f1-micro.
+- En la sección "Identidad y acceso a la API" seleccionar la cuenta de servicio creada anteriormente.
+- En opciones avanzadas, seleccionar "Herramientas de redes" y agregar la red creada en la sección de VPC.
+- Por último, en la sección de Administración > Automatización se debe de pegar las siguientes secuencias de inicio
+
+```bash
+
+```
 
 ## **Creacion de Maquinas Virtuales**
 ---
@@ -160,3 +174,4 @@ gcloud compute instances create $BACKEND \
 --zone $ZONE \
 --private-network-ip 172.16.0.5 \
 --machine-type f1-micro
+```
