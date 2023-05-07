@@ -209,10 +209,10 @@ El worker en esta ocasión funcionará sobre una función en Cloud Function, par
 - Versión 2
 - Estar en la misma región que lo anterior.
 - Tener como trigger el pub/sub creado en el paso anterior, ya que esta tarea se dispara con la carga de una nueva tarea.
-- Para mantener las restricciones iniciales, se crea con solo 614MB de RAM y un solo núcleo. Al igual que el grupo de auto-scaling, se mantienen la restricción de mínimo una sola maquina 3 máximo.
+- Para mantener las restricciones iniciales, se crea con solo 614MB de RAM y un solo núcleo. Al igual que el grupo de auto-scaling, se mantienen la restricción de mínimo una sola maquina 3 máximo. Es importante que en este punto, en la sección de "Cuenta de servicio del entorno de ejecución" que encontramos en  "Configuración del entorno de ejecución, la compilación, las conexiones y la seguridad" se seleccione la cuenta de servicio.
 - Con respecto al tráfico, como solo se perminten conexiones internas a la base de datos, se crea una red específica para la Función y se asocia a la red interna creada anteriormente, esto con la finalidad de que la función alcance la SQL.
 
-Con respecto al entorno de ejecución, utilizaremos la última versión de python disponible que es la 3.11 y subiremos la carpeta comprimida que se encuentra en la sección de Function de la presente entrega. Un punto importante es que se debe de modificar el contenido de 
+Con respecto al entorno de ejecución, utilizaremos la última versión de python disponible que es la 3.11 y subiremos la carpeta comprimida que se encuentra en la sección de Function de la presente entrega.
 
 
 
