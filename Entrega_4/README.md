@@ -179,6 +179,7 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 git clone https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud.git
 cd Entrega-1---Sistema-de-Conversi-n-Cloud/Entrega_4/Backend/
 docker compose up -d
