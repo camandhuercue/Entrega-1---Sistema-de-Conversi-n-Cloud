@@ -156,7 +156,7 @@ El nombre del tópico se debe de actualiza en la variable de entorno del Dockerf
 
 ## **Creación de Cuenta de Servicio**
 
-Se debe de crear una cuenta de servico con la finalidad de que las máquinas que se crean en el autoscaling tengan permisos de leer el tópico y escribir en el bucket. Por temas de facilidad y tiempo, se asignan roles de administración tanto para pub/sub como para cloud storage. Esto se hace desde "IAM y Adminbistración" > "Cuentas de Servicio", se da clic en crear una cuenta de servicio, se asigna un nombre para tal cuenta y se da clic en "crear y continuar". En los roles buscamos "Cloud Storage" y agregamos "Administrador de Almacenamiento", luego agregamos otro rol y buscamos "Pub/Sub" y agregamos "Administrador de Pub/Sub". Con esto ya creamos nuestra cuenta de servicio para asignar a la plantilla de instancia.
+Se debe de crear una cuenta de servico con la finalidad de que las máquinas que se crean en el autoscaling tengan permisos de leer el tópico y escribir en el bucket. Por temas de facilidad y tiempo, se asignan roles de administración tanto para pub/sub como para cloud storage. Esto se hace desde "IAM y Adminbistración" > "Cuentas de Servicio", se da clic en crear una cuenta de servicio, se asigna un nombre para tal cuenta y se da clic en "crear y continuar". En los roles buscamos "Cloud Storage" y agregamos "Administrador de Almacenamiento", luego agregamos otro rol y buscamos "Pub/Sub" y agregamos "Administrador de Pub/Sub", por último, como usamos también Artifacts Registry para las imagenes de Docker, se asigna el rol de aministrador en dicho servicio. Con esto ya creamos nuestra cuenta de servicio para asignar a la plantilla de instancia.
 
 
 ## **Creación de Plantilla de Instancias**
