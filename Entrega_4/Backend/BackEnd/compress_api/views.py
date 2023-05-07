@@ -183,8 +183,10 @@ class Tasks_id(Resource):
                     Tasks_TB.query.filter_by(email=email, id=id_task).delete()
                     db.session.commit()
                     blob_name = email + "/" + task.id
-                    blob = bucket.blob(blob_name)
-                    blob.delete()
+                    #blob = bucket.blob(blob_name)
+                    blobs = bucket.list_blobs(prefix=blob_name)
+                    for blob in blobs:
+                        blob.delete()
 
                     return {'message': 'La tarea ha sido eliminada', 'id': 0}, 200
                 else:
