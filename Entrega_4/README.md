@@ -202,6 +202,20 @@ gcloud beta compute instance-groups managed set-autoscaling grupo-backend --proj
 
 **Nota**: Tener presente que la creación de la imagen de Docker puede tardar aproximadamente 5 minutos debido a que la máquina es muy pequeña en procesamiento.
 
+## **Creacion de Función para Worker**
+
+El worker en esta ocasión funcionará sobre una función en Cloud Function, para esto crearemos una función con las siguientes características al momento de la creación:
+
+- Versión 2
+- Estar en la misma región que lo anterior.
+- Tener como trigger el pub/sub creado en el paso anterior, ya que esta tarea se dispara con la carga de una nueva tarea.
+- Para mantener las restricciones iniciales, se crea con solo 614MB de RAM y un solo núcleo. Al igual que el grupo de auto-scaling, se mantienen la restricción de mínimo una sola maquina 3 máximo.
+- Con respecto al tráfico, como solo se perminten conexiones internas a la base de datos, se crea una red específica para la Función y se asocia a la red interna creada anteriormente, esto con la finalidad de que la función alcance la SQL.
+
+Con respecto al entorno de ejecución, utilizaremos la última versión de python disponible que es la 3.11 y subiremos la carpeta comprimida que se encuentra en la sección de Function de la presente entrega. Un punto importante es que se debe de modificar el contenido de 
+
+
+
 ## **Creacion de Maquinas Virtuales**
 
 Ejecute el siguiente comando para crear las máquinas virtuales necesarias para la ejecución de la aplicación.
