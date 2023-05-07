@@ -214,7 +214,7 @@ El worker en esta ocasión funcionará sobre una función en Cloud Function, par
 
 Con respecto al entorno de ejecución, utilizaremos la última versión de python disponible que es la 3.11 y subiremos la carpeta comprimida que se encuentra en la sección de Function de la presente entrega.
 
-
+Es importante que en la sección del código, se modifique "__init__.py" que se encuentra en la carpeta "queue_api" para apuntar a la IP de la base de datos.
 
 ## **Creacion de Maquinas Virtuales**
 
