@@ -128,6 +128,22 @@ CREATE SCHEMA compress_schema;
 ```
 La IP asignada por Google se debe de configurar en la variable de entorno del Dockerfile en Backend.
 
+## **Configuración de Zona DNS Privada**
+
+Para mantener las modificaciones de código al mínimo y con el objetivo de poder automatizar el despliegue de las funcionalidades como lo son Cloud Functions y Autoscaling, se decide la creación de una zona privada de DNS para apuntar a la instancia de SQL. Para ello nos dirigimos al servicio de Cloud DNS y creamos una zona:
+
+- Seleccionamos un nombre descriptivo.
+- Seleccionamos que sea una zona privada.
+- Asignamos un dominio, en este caso es soluciones.cloud
+
+El restante se deja por default. Una vez la zona esté arriba, entramos en ella y agregamos un estandar:
+
+- Es del tipo A
+- En nuestro caso, seleccionamos el nombre de dominio sql.soluciones.cloud y apuntamos a la IP que nos asignó la SQL.
+
+Este mismo dominio ya se encuentra en el código desarrollado.
+
+
 ## **Creación de Tópico**
 
 Para crear un tópico, al cual las tareas de compirmir se subirán, se ejecuta el siguiente comando en la consola de Google Cloud:
