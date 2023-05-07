@@ -10,7 +10,7 @@ La arquitectura que se establecio crear es mostrada en la siguiente imagen.
 
 ![Infraestructura File Compresor GCP.](https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud/blob/main/Entrega_3/imgs/Infraestructura_GCP.jpg "Infraestructura File Compresor GCP.")
 
-# **Despliegue de Infraestructura por Cloud Shell**
+# **Despliegue de Infraestructura por Cloud Shell/Console**
 
 Ejecute los siguientes comando configurar la region y zona:
 
@@ -85,7 +85,7 @@ gcloud compute firewall-rules create $FIREWALL_ALLOW_INTERNAL \
  --source-ranges=172.16.0.0/24
 ```
 
-# **Configuración de SQL**
+## **Configuración de SQL**
 
 Dentro de los archivos de Terraform tambien se deja la opcion de crear la instancia que soportara a Cloud SQL sin embargo este proceso tarda alrededor de 18 Minutos a comparacion de lo 5 Minutos que tarda al crearse por consola. En caso de querer probar que se puede desplegar la instancia SQL con Terraform descomnete el modulo que se encuentra en el archivo ***cloud-sql.tf***
 
@@ -189,13 +189,12 @@ Para este punto, vamos a "Compute Engine" > Grupo de instancias y creamos un gru
 Los comandos se muestran a continuación 
 
 ```bash
-gcloud beta compute instance-groups managed create {nombre_de_grupo} --project={nombre_de_proyecto} --base-instance-name={nombre_de_grupo} --size=1 --template={nombre_de_plantilla} --zone=us-central1-a --target-distribution-shape=EVEN --instance-redistribution-type=PROACTIVE --list-managed-instances-results=PAGELESS --no-force-update-on-repair && gcloud compute instance-groups managed set-named-ports grupo-backend --project={nombre_del_proyecto} --region=us-central1 --named-ports=flask:8080 && gcloud beta compute instance-groups managed set-autoscaling {nombre_de_grupo} --project={nombre_del_proyecto} --zone=us-central1-a --cool-down-period=600 --max-num-replicas=3 --min-num-replicas=1 --mode=on --target-cpu-utilization=0.5 --update-stackdriver-metric=compute.googleapis.com/instance/memory/balloon/ram_used --stackdriver-metric-utilization-target=60.0 --stackdriver-metric-utilization-target-type=gauge
+gcloud beta compute instance-groups managed create {nombre_de_grupo} --project={nombre_de_proyecto} --base-instance-name={nombre_de_grupo} --size=1 --template={nombre_de_plantilla} --zone=us-central1-a --target-distribution-shape=EVEN --instance-redistribution-type=PROACTIVE --list-managed-instances-results=PAGELESS --no-force-update-on-repair && gcloud compute instance-groups managed set-named-ports grupo-backend --project={nombre_del_proyecto} --region=us-central1 --named-ports=flask:8080 && gcloud beta compute instance-groups managed set-autoscaling {nombre_de_grupo} --project={nombre_del_proyecto} --zone=us-central1-a --cool-down-period=600 --max-num-replicas=3 --min-num-replicas=1 --mode=on --target-cpu-utilization=0.5
 ```
 
 **Nota**: Tener presente que la creación de la imagen de Docker puede tardar aproximadamente 5 minutos debido a que la máquina es muy pequeña en procesamiento.
 
 ## **Creacion de Maquinas Virtuales**
----
 
 Ejecute el siguiente comando para crear las máquinas virtuales necesarias para la ejecución de la aplicación.
 
