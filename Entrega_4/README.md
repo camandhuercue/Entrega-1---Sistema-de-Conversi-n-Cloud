@@ -189,7 +189,15 @@ Para este punto, vamos a "Compute Engine" > Grupo de instancias y creamos un gru
 Los comandos se muestran a continuación 
 
 ```bash
-gcloud beta compute instance-groups managed create {nombre_de_grupo} --project={nombre_de_proyecto} --base-instance-name={nombre_de_grupo} --size=1 --template={nombre_de_plantilla} --zone=us-central1-a --target-distribution-shape=EVEN --instance-redistribution-type=PROACTIVE --list-managed-instances-results=PAGELESS --no-force-update-on-repair && gcloud compute instance-groups managed set-named-ports grupo-backend --project={nombre_del_proyecto} --region=us-central1 --named-ports=flask:8080 && gcloud beta compute instance-groups managed set-autoscaling {nombre_de_grupo} --project={nombre_del_proyecto} --zone=us-central1-a --cool-down-period=600 --max-num-replicas=3 --min-num-replicas=1 --mode=on --target-cpu-utilization=0.5
+gcloud beta compute instance-groups managed create grupo-backend --project=soluciones-cloud --base-instance-name=grupo-backend --size=1 --template=plantilla-backend --zone=us-central1-a --list-managed-instances-results=PAGELESS --no-force-update-on-repair
+```
+
+```bash
+gcloud beta compute instance-groups managed create grupo-backend --project=soluciones-cloud --base-instance-name=grupo-backend --size=1 --template=plantilla-backend --zone=us-central1-a --list-managed-instances-results=PAGELESS --no-force-update-on-repair
+```
+
+```bash
+gcloud beta compute instance-groups managed set-autoscaling grupo-backend --project=soluciones-cloud --zone=us-central1-a --cool-down-period=600 --max-num-replicas=3 --min-num-replicas=1 --mode=on --target-cpu-utilization=0.5
 ```
 
 **Nota**: Tener presente que la creación de la imagen de Docker puede tardar aproximadamente 5 minutos debido a que la máquina es muy pequeña en procesamiento.
