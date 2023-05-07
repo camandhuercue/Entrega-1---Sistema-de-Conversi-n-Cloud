@@ -17,7 +17,7 @@ RUN pip install google-cloud-storage
 RUN pip install google-cloud-pubsub
 
 ENV FLASK_APP="compress_api"
-ENV DB_HOST="172.16.2.5"
+ENV DB_HOST="172.16.2.7"
 ENV DB_DB="compress_database"
 ENV DB_USER="postgres"
 ENV DB_PORT="5432"
