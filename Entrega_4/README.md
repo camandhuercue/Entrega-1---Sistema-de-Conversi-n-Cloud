@@ -229,6 +229,10 @@ El worker en esta ocasión funcionará sobre una función en Cloud Function, par
 
 Con respecto al entorno de ejecución, utilizaremos la última versión de python disponible que es la 3.11 y subiremos la carpeta comprimida que se encuentra en la sección de Function de la presente entrega.
 
+## **Creacion de Balanceador de Cargas**
+
+
+
 ## **Creacion de Maquinas Virtuales**
 
 Ejecute el siguiente comando para crear las máquinas virtuales necesarias para la ejecución de la aplicación.
