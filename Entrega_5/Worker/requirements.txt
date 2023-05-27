@@ -1,0 +1,9 @@
+SQLAlchemy
+marshmallow
+psycopg2-binary
+zipfile36
+py7zr
+bz2file
+secure-smtplib
+google-cloud-storage
+flask
