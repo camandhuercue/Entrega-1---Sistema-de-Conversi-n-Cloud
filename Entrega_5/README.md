@@ -161,6 +161,31 @@ Se debe de crear una cuenta de servico con la finalidad de que las máquinas que
 
 Como el objetivo principal es crear instancias de Cloud Run, debemos de publicar nuestras imagenes en Artifact Registry, para ello necesitamos una instancia de Compute Engine donde se compilará las imagenes de Docker para poder desplegarlas posteriormente. Para ello se debe de crear una instancia del tamaño que se acomode a las necesidades de lo que deseen realizar. Recordar que esta instancia debe de pertenecer a la red creada anteriormente y tener asignada la cuenta de servicio que se creó en el paso anterior. Una vez creada, ejecutar los siguientes comandos para poder crear las imagenes de Docker y cargarlas en Arctifacts Registry.
 
+Instalación Docker 
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+```
+
+```bash
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+```bash
+sudo apt-get update
+```
+
+```bash
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+```
+
+
+
 ## **Creacion de Función para Worker**
 
 El worker en esta ocasión funcionará sobre una función en Cloud Function, para esto crearemos una función con las siguientes características al momento de la creación:
@@ -172,9 +197,6 @@ El worker en esta ocasión funcionará sobre una función en Cloud Function, par
 - Con respecto al tráfico, como solo se perminten conexiones internas a la base de datos, se crea una red específica para la Función y se asocia a la red interna creada anteriormente, esto con la finalidad de que la función alcance la SQL.
 
 Con respecto al entorno de ejecución, utilizaremos la última versión de python disponible que es la 3.11 y subiremos la carpeta comprimida que se encuentra en la sección de Function de la presente entrega.
-
-## **Creacion de Balanceador de Cargas**
-
 
 
 ## **Creacion de Maquinas Virtuales**
