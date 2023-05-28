@@ -8,7 +8,7 @@ El despliegue de la arquitectura se realizó de dos maneras que llevan al mismo
 
 La arquitectura que se establecio crear es mostrada en la siguiente imagen.
 
-![Infraestructura File Compresor GCP.](https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud/blob/main/img/Arquitectura-Cloud.png "Infraestructura File Compresor GCP.")
+![Infraestructura File Compresor GCP.](https://github.com/camandhuercue/Entrega-1---Sistema-de-Conversi-n-Cloud/blob/main/img/Arquitectura-entrega-5.png "Infraestructura File Compresor GCP.")
 
 # **Despliegue de Infraestructura por Cloud Shell/Console**
 
